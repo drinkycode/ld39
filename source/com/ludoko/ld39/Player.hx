@@ -1,6 +1,8 @@
 package com.ludoko.ld39;
 
+import com.ludoko.ld39.game.Wire;
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
 
 /**
@@ -10,25 +12,64 @@ import flixel.FlxSprite;
 class Player extends FlxSprite
 {
 
-	public static inline var PLAYER_MAX_SPEED:Float = 160;
-	public static inline var PLAYER_ACCELERATION:Float = 1000;
-	public static inline var PLAYER_DRAG:Float = 3000;
+	public static inline var PLAYER_MAX_SPEED:Float = 200;
+	public static inline var PLAYER_ACCELERATION:Float = 9999;
+	public static inline var PLAYER_DRAG:Float = 9999;
+	
+	public static inline var PLAYER_WIDTH:Int = 32;
+	public static inline var PLAYER_HEIGHT:Int = 32;
+	
+	public static inline var WIRE_CREATE_OFFSET:Int = 16;
+	
 	
 	public var moving:Bool = false;
 	
 	public function new(X:Float, Y:Float) 
 	{
-		super(X, Y);
+		super(-9999, -9999);
 		
-		loadGraphic("assets/images/player.png");
+		loadGraphic("assets/images/player.png", true, 48, 96);
+		animation.add("side", [0], 0, false);
+		animation.add("down", [1], 0, false);
+		animation.add("up", [2], 0, false);
+		
+		setFacingFlip(FlxObject.LEFT, true, false);
+		setFacingFlip(FlxObject.RIGHT, false, false);
+		setFacingFlip(FlxObject.DOWN, false, false);
+		setFacingFlip(FlxObject.UP, false, false);
+		
+		// Set up hitbox
+		width = PLAYER_WIDTH;
+		height = PLAYER_HEIGHT;
+		offset.x = Math.floor((frameWidth - width) * 0.5);
+		offset.y = frameHeight - height - 8;
 		
 		maxVelocity.x = maxVelocity.y = PLAYER_MAX_SPEED;
+		
+		// Set player position here
+		setCenteredPosition(X, Y);
+	}
+	
+	public function setCenteredPosition(X:Float, Y:Float):Void
+	{
+		x = X - PLAYER_WIDTH * 0.5;
+		y = Y - PLAYER_HEIGHT * 0.5;
+	}
+	
+	public var centerX(get, null):Float;
+	public function get_centerX():Float
+	{
+		return x + PLAYER_WIDTH * 0.5;
+	}
+	
+	public var centerY(get, null):Float;
+	public function get_centerY():Float
+	{
+		return y + PLAYER_HEIGHT * 0.5;
 	}
 	
 	override public function update():Void 
 	{
-		super.update();
-		
 		moving = false;
 		acceleration.x = acceleration.y = 0;
 		
@@ -62,6 +103,36 @@ class Player extends FlxSprite
 		{
 			drag.x = drag.y = PLAYER_DRAG;
 		}
+		else
+		{
+			if (acceleration.x == 0)
+			{
+				if (acceleration.y < 0)
+				{
+					animation.play("up");
+					facing = FlxObject.UP;
+				}
+				else
+				{
+					animation.play("down");
+					facing = FlxObject.DOWN;
+				}
+			}
+			else
+			{
+				animation.play("side");
+				if (acceleration.x < 0)
+				{
+					facing = FlxObject.LEFT;
+				}
+				else
+				{
+					facing = FlxObject.RIGHT;
+				}
+			}
+		}
+		
+		super.update();
 	}
 	
 	private function updateMoving():Void 
@@ -72,7 +143,22 @@ class Player extends FlxSprite
 	
 	public function addWire():Bool
 	{
-		Wire.create(x, y);
+		var createOffsetX:Float = 0;
+		var createOffsetY:Float = 0;
+		
+		switch (facing) 
+		{
+			case FlxObject.LEFT:
+				createOffsetX = -WIRE_CREATE_OFFSET;
+			case FlxObject.RIGHT:
+				createOffsetX = WIRE_CREATE_OFFSET;
+			case FlxObject.UP:
+				createOffsetY = -WIRE_CREATE_OFFSET;
+			case FlxObject.DOWN:
+				createOffsetY = WIRE_CREATE_OFFSET;
+		}
+		
+		Wire.create(centerX + createOffsetX, centerY + createOffsetY);
 		return true;
 	}
 	

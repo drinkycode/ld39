@@ -1,23 +1,23 @@
 package com.ludoko.ld39;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
-import flixel.text.FlxText;
 
 /**
  * ...
  * @author Michael Lee
  */
-class GameGUI extends FlxGroup
+class Layer extends FlxGroup
 {
+	
+	public var order:Int;
 
-	
-	
-	
-	public function new() 
+	public function new(Order:Int) 
 	{
 		super();
+		order = Order;
 	}
 	
 }

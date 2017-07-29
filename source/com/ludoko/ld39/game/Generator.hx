@@ -1,4 +1,4 @@
-package com.ludoko.ld39;
+package com.ludoko.ld39.game;
 
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;

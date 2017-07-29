@@ -1,5 +1,6 @@
-package com.ludoko.ld39;
+package com.ludoko.ld39.game;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 
@@ -7,9 +8,9 @@ import flixel.group.FlxGroup;
  * ...
  * @author Michael Lee
  */
-class Wire extends FlxSprite
+class Enemy extends FlxSprite
 {
-	
+
 	public static var group:FlxGroup;
 	
 	public static function preload(Amount:Int):FlxGroup
@@ -27,17 +28,17 @@ class Wire extends FlxSprite
 		return group;
 	}
 	
-	private static function createInstance():Wire
+	private static function createInstance():Enemy
 	{
-		var o:Wire = new Wire();
+		var o:Enemy = new Enemy();
 		o.kill();
 		group.add(o);
 		return o;
 	}
 
-	public static function create(X:Float, Y:Float):Wire
+	public static function create(X:Float, Y:Float):Enemy
 	{
-		var o:Wire = cast group.getFirstDead();
+		var o:Enemy = cast group.getFirstDead();
 		if (o == null)
 		{
 			o = createInstance();
@@ -48,13 +49,7 @@ class Wire extends FlxSprite
 	
 	public function new() 
 	{
-		super( -9999, -9999);
-		loadGraphic("assets/images/wire.png");
-	}
-	
-	override public function reset(X:Float, Y:Float):Void 
-	{
-		super.reset(X, Y);
+		super(-9999, -9999);
 	}
 	
 }

@@ -1,4 +1,4 @@
-package com.ludoko.ld39;
+package com.ludoko.ld39.ui;
 
 import flixel.FlxG;
 import flixel.FlxSprite;

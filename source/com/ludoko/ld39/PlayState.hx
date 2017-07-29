@@ -1,6 +1,10 @@
 package com.ludoko.ld39;
 
 import com.ludoko.ld39.G;
+import com.ludoko.ld39.game.Generator;
+import com.ludoko.ld39.game.Wire;
+import com.ludoko.ld39.ui.Grid;
+
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -22,7 +26,8 @@ class PlayState extends FlxState
 
 	public static var instance:PlayState;
 	
-	public var grid:Grid;
+	public var currentLevel:GameLevel;
+	
 	public var player:Player;
 	public var gui:GameGUI;
 	
@@ -47,9 +52,6 @@ class PlayState extends FlxState
 	
 	public function gameSetup():Void
 	{
-		// Currently just a debug grid.
-		grid = new Grid(14, 10);
-		
 		loadLevel();
 		
 		// Preloads for pooling.
@@ -64,16 +66,20 @@ class PlayState extends FlxState
 		
 		
 		// Setup adds in proper layering order.
-		add(grid);
-		add(Wire.group);
+		add(currentLevel);
 		
 		add(player);
+		add(Wire.group);
+		
 		add(gui);
 	}
 	
 	public function loadLevel():Void
 	{
+		var levelWidth:Int = 14;
+		var levelHeight:Int = 10;
 		
+		currentLevel = new GameLevel(14, 10);
 	}
 	
 	override public function update():Void

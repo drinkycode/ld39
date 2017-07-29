@@ -1,6 +1,7 @@
 package com.ludoko.ld39;
 
 import flixel.FlxG;
+import flixel.util.FlxPoint;
 import flixel.util.FlxSave;
 
 /**
@@ -36,5 +37,8 @@ class G
 	public static var score:Int = 0;
 	
 	public static var saves:Array<FlxSave> = [];
+	
+	// Quick helper variables.
+	public static var p:FlxPoint = new FlxPoint();
 	
 }
