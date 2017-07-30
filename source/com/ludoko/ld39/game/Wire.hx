@@ -62,8 +62,8 @@ class Wire extends TileObject
 	
 	override public function reset(X:Float, Y:Float):Void 
 	{
-		var createAtX:Float = GameLevel.findTilePositionAtX(X);
-		var createAtY:Float = GameLevel.findTilePositionAtY(Y);
+		var createAtX:Float = GameLevel.tilePositionAtX(X);
+		var createAtY:Float = GameLevel.tilePositionAtY(Y);
 		
 		super.reset(createAtX, createAtY);
 	}

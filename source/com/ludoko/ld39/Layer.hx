@@ -12,12 +12,21 @@ import flixel.group.FlxGroup;
 class Layer extends FlxGroup
 {
 	
-	public var order:Int;
-
-	public function new(Order:Int) 
+	public var row:Int;
+	
+	public var gameObjects:FlxGroup;
+	public var characters:FlxGroup;
+	
+	public function new(Row:Int) 
 	{
 		super();
-		order = Order;
+		row = Row;
+		
+		gameObjects = new FlxGroup();
+		add(gameObjects);
+		
+		characters = new FlxGroup();
+		add(characters);
 	}
 	
 }

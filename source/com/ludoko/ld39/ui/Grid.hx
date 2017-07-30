@@ -19,7 +19,7 @@ class Grid extends FlxGroup
 		{
 			for (j in 0 ... Height)
 			{
-				var tile:FlxSprite = new FlxSprite(GameLevel.getPositionAtTileX(i), GameLevel.getPositionAtTileY(j), "assets/images/grid.png");
+				var tile:FlxSprite = new FlxSprite(GameLevel.positionAtTileX(i), GameLevel.positionAtTileY(j), "assets/images/grid.png");
 				add(tile);
 			}
 		}

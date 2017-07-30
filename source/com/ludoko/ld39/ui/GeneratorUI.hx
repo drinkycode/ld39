@@ -16,7 +16,6 @@ class GeneratorUI extends FlxGroup
 	public function new() 
 	{
 		super();
-		
 	}
 	
 }

@@ -53,18 +53,18 @@ class PlayState extends FlxState
 	
 	public function gameSetup():Void
 	{
-		loadLevel();
+		activeGenerators = new Array<Generator>();
 		
 		// Preloads for pooling.
 		Wire.preload(10);
 		Generator.preload(3);
 		
-		activeGenerators = new Array<Generator>();
-		
 		player = new Player(G.halfWidth, G.halfHeight);
-		
 		gui = new GameGUI();
 		
+		loadLevel();
+		addGenerator(2, 2, 100);
+		addGenerator(5, 2, 0);
 		
 		// Setup adds in proper layering order.
 		add(currentLevel);
@@ -81,6 +81,12 @@ class PlayState extends FlxState
 		var levelHeight:Int = 10;
 		
 		currentLevel = new GameLevel(14, 10);
+	}
+	
+	public function addGenerator(TileX:Int, TileY:Int, Power:Float = 100):Void
+	{
+		var generator:Generator = currentLevel.addGenerator(TileX, TileY, Power);
+		activeGenerators.push(generator);
 	}
 	
 	override public function update():Void

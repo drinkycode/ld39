@@ -1,5 +1,6 @@
 package com.ludoko.ld39;
 
+import com.ludoko.ld39.game.Generator;
 import com.ludoko.ld39.game.Wall;
 import com.ludoko.ld39.ui.Grid;
 
@@ -19,22 +20,22 @@ class GameLevel extends FlxGroup
 	public static var tilePixelOffsetX:Int;
 	public static var tilePixelOffsetY:Int;
 
-	public static function findTilePositionAtX(X:Float)
+	public static function tilePositionAtX(X:Float)
 	{
-		return getPositionAtTileX(getTileAtX(X));
+		return positionAtTileX(getTileAtX(X));
 	}
 	
-	public static function findTilePositionAtY(Y:Float)
+	public static function tilePositionAtY(Y:Float)
 	{
-		return getPositionAtTileY(getTileAtY(Y));
+		return positionAtTileY(getTileAtY(Y));
 	}
 	
-	public static function getPositionAtTileX(TileX:Int):Int
+	public static function positionAtTileX(TileX:Int):Int
 	{
 		return TileX * GameLevel.TILE_WIDTH + GameLevel.tilePixelOffsetX;
 	}
 	
-	public static function getPositionAtTileY(TileY:Int):Int
+	public static function positionAtTileY(TileY:Int):Int
 	{
 		return TileY * GameLevel.TILE_HEIGHT + GameLevel.tilePixelOffsetY;
 	}
@@ -84,6 +85,7 @@ class GameLevel extends FlxGroup
 		{
 			var layer:Layer = new Layer(i);
 			add(layer);
+			layers.push(layer);
 			i--;
 		}
 	}
@@ -106,6 +108,13 @@ class GameLevel extends FlxGroup
 		
 		wall = new Wall(tilePixelOffsetX, tilePixelOffsetY + TILE_HEIGHT * levelHeight, TILE_WIDTH * levelWidth, wallSize);
 		Wall.group.add(wall);
+	}
+	
+	public function addGenerator(TileX:Int, TileY:Int, Power:Float):Generator
+	{
+		var generator:Generator = Generator.create(TileX, TileY, Power);
+		layers[TileY].gameObjects.add(generator);
+		return generator;
 	}
 	
 }

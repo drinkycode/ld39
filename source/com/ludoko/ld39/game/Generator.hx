@@ -35,16 +35,19 @@ class Generator extends TileObject
 		return o;
 	}
 
-	public static function create(X:Float, Y:Float):Generator
+	public static function create(TileX:Int, TileY:Int, Power:Float):Generator
 	{
 		var o:Generator = cast group.getFirstDead();
 		if (o == null)
 		{
 			o = createInstance();
 		}
-		o.reset(X, Y);
+		o.resetGenerator(TileX, TileY, Power);
 		return o;
 	}
+	
+	
+	public var power:Float;
 	
 	public function new() 
 	{
@@ -52,9 +55,10 @@ class Generator extends TileObject
 		loadGraphic("assets/images/generator.png");
 	}
 	
-	override public function reset(X:Float, Y:Float):Void 
+	public function resetGenerator(TileX:Int, TileY:Int, Power:Float):Void 
 	{
-		super.reset(X, Y);
+		reset(GameLevel.positionAtTileX(TileX), GameLevel.positionAtTileY(TileY));
+		power = Power;
 	}
 	
 }
