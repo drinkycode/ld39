@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="14" height="10" tilewidth="48" tileheight="48" nextobjectid="10">
+ <tileset firstgid="1" name="player" tilewidth="48" tileheight="96" tilecount="3">
+  <image source="../images/player.png" width="144" height="96"/>
+ </tileset>
+ <tileset firstgid="4" name="generator" tilewidth="48" tileheight="48" tilecount="1">
+  <image source="../images/generator.png" width="48" height="48"/>
+ </tileset>
+ <objectgroup name="entities">
+  <object id="1" name="player" gid="1" x="335" y="267" width="48" height="96"/>
+  <object id="3" name="start_generator" gid="4" x="192" y="240" width="48" height="48">
+   <properties>
+    <property name="level0" value="50"/>
+    <property name="level1" value="32"/>
+    <property name="level10" value=""/>
+    <property name="level2" value="50"/>
+    <property name="level3" value=""/>
+    <property name="level4" value=""/>
+    <property name="level5" value=""/>
+    <property name="level6" value=""/>
+    <property name="level7" value=""/>
+    <property name="level8" value=""/>
+    <property name="level9" value=""/>
+   </properties>
+  </object>
+  <object id="7" name="generator" gid="4" x="96" y="384" width="48" height="48">
+   <properties>
+    <property name="level0" value="0"/>
+    <property name="level1" value="0"/>
+    <property name="level10" value=""/>
+    <property name="level2" value="15"/>
+    <property name="level3" value=""/>
+    <property name="level4" value=""/>
+    <property name="level5" value=""/>
+    <property name="level6" value=""/>
+    <property name="level7" value=""/>
+    <property name="level8" value=""/>
+    <property name="level9" value=""/>
+   </properties>
+  </object>
+  <object id="8" name="generator" gid="4" x="432" y="144" width="48" height="48">
+   <properties>
+    <property name="level0" value="25"/>
+    <property name="level1" value="32"/>
+    <property name="level10" value=""/>
+    <property name="level2" value="15"/>
+    <property name="level3" value=""/>
+    <property name="level4" value=""/>
+    <property name="level5" value=""/>
+    <property name="level6" value=""/>
+    <property name="level7" value=""/>
+    <property name="level8" value=""/>
+    <property name="level9" value=""/>
+   </properties>
+  </object>
+  <object id="9" name="generator" gid="4" x="438" y="296" width="48" height="48">
+   <properties>
+    <property name="level0" value="25"/>
+    <property name="level1" value="32"/>
+    <property name="level10" value=""/>
+    <property name="level2" value="15"/>
+    <property name="level3" value=""/>
+    <property name="level4" value=""/>
+    <property name="level5" value=""/>
+    <property name="level6" value=""/>
+    <property name="level7" value=""/>
+    <property name="level8" value=""/>
+    <property name="level9" value=""/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="tiles" width="14" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo4B4AAACMAAB
+  </data>
+ </layer>
+</map>
