@@ -3,6 +3,7 @@ package com.ludoko.ld39;
 import com.ludoko.ld39.G;
 import com.ludoko.ld39.game.Generator;
 import com.ludoko.ld39.game.Player;
+import com.ludoko.ld39.game.Sparkie;
 import com.ludoko.ld39.game.Wire;
 import com.ludoko.ld39.ui.GeneratorUI;
 import com.ludoko.ld39.ui.Grid;
@@ -60,6 +61,7 @@ class PlayState extends FlxState
 		Wire.preload(10);
 		Generator.preload(5);
 		GeneratorUI.preload(5);
+		Sparkie.preload(5);
 		
 		loadLevel();
 		
@@ -69,6 +71,8 @@ class PlayState extends FlxState
 		addGenerator(2, 2, 100);
 		addGenerator(5, 2, 0);
 		addGenerator(8, 2, 0);
+		
+		addSparkie(1, 5);
 		
 		// Setup adds in proper layering order.
 		add(currentLevel);
@@ -87,6 +91,11 @@ class PlayState extends FlxState
 	{
 		var generator:Generator = currentLevel.addGenerator(TileX, TileY, Power);
 		activeGenerators.push(generator);
+	}
+	
+	public function addSparkie(TileX:Int, TileY:Int):Void
+	{
+		Sparkie.create(GameLevel.positionAtTileX(TileX), GameLevel.positionAtTileY(TileY));
 	}
 	
 	public function checkWireConnections():Void

@@ -21,7 +21,7 @@ class Player extends TileObject
 	public static inline var PLAYER_WIDTH:Int = 32;
 	public static inline var PLAYER_HEIGHT:Int = 32;
 	
-	public static inline var WIRE_CREATE_OFFSET:Int = 16;
+	public static inline var WIRE_CREATE_OFFSET:Int = 20;
 	
 	
 	public var moving:Bool = false;
