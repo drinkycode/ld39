@@ -8,7 +8,7 @@ import flixel.group.FlxGroup;
  * ...
  * @author Michael Lee
  */
-class Enemy extends FlxSprite
+class Sparkie extends FlxSprite
 {
 
 	public static var group:FlxGroup;
@@ -28,17 +28,17 @@ class Enemy extends FlxSprite
 		return group;
 	}
 	
-	private static function createInstance():Enemy
+	private static function createInstance():Sparkie
 	{
-		var o:Enemy = new Enemy();
+		var o:Sparkie = new Sparkie();
 		o.kill();
 		group.add(o);
 		return o;
 	}
 
-	public static function create(X:Float, Y:Float):Enemy
+	public static function create(X:Float, Y:Float):Sparkie
 	{
-		var o:Enemy = cast group.getFirstDead();
+		var o:Sparkie = cast group.getFirstDead();
 		if (o == null)
 		{
 			o = createInstance();

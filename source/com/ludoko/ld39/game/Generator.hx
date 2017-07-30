@@ -1,5 +1,6 @@
 package com.ludoko.ld39.game;
 
+import com.ludoko.ld39.ui.GeneratorUI;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 
@@ -52,8 +53,11 @@ class Generator extends TileObject
 	
 	public var power:Float;
 	public var startingPower:Float;
+	public var totalPower:Float;
 	
 	public var connections:Array<Generator>;
+	
+	public var ui:GeneratorUI;
 	
 	public function new() 
 	{
@@ -75,14 +79,31 @@ class Generator extends TileObject
 		tileY = TileY;
 		
 		reset(GameLevel.positionAtTileX(TileX), GameLevel.positionAtTileY(TileY));
-		power = startingPower = Power;
+		power = startingPower = totalPower = Power;
 		
 		connections = [];
+		
+		ui = GeneratorUI.create(x + HITBOX_WIDTH * 0.5, y + HITBOX_HEIGHT * 0.5, Power);
 	}
 	
 	public function hasConnection(ConnectedGenerator:Generator):Bool
 	{
 		return connections.indexOf(ConnectedGenerator) != -1;
+	}
+	
+	public function setPower(NewPower:Float):Void
+	{
+		power = NewPower;
+		
+		if (NewPower <= totalPower)
+		{
+			ui.updatePower(power);
+		}
+		else
+		{
+			totalPower = NewPower;
+			ui.updatePower(power, totalPower);
+		}
 	}
 	
 }

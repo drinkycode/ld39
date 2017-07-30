@@ -135,6 +135,18 @@ class GameLevel extends FlxGroup
 		layers[Row].addCharacter(Object);
 	}
 	
+	public function removeUIFromLayer(Object:FlxObject, Row:Int):Bool
+	{
+		if ((Row < 0) || (Row >= levelHeight)) return false;
+		return layers[Row].removeUI(Object);
+	}
+	
+	public function addUIToLayer(Object:FlxObject, Row:Int):Void
+	{
+		if ((Row < 0) || (Row >= levelHeight)) return;
+		layers[Row].addUI(Object);
+	}
+	
 	public function addGenerator(TileX:Int, TileY:Int, Power:Float):Generator
 	{
 		var generator:Generator = Generator.create(TileX, TileY, Power);

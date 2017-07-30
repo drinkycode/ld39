@@ -4,6 +4,7 @@ import com.ludoko.ld39.G;
 import com.ludoko.ld39.game.Generator;
 import com.ludoko.ld39.game.Player;
 import com.ludoko.ld39.game.Wire;
+import com.ludoko.ld39.ui.GeneratorUI;
 import com.ludoko.ld39.ui.Grid;
 
 import flixel.FlxBasic;
@@ -57,7 +58,8 @@ class PlayState extends FlxState
 		
 		// Preloads for pooling.
 		Wire.preload(10);
-		Generator.preload(3);
+		Generator.preload(5);
+		GeneratorUI.preload(5);
 		
 		loadLevel();
 		
@@ -66,6 +68,7 @@ class PlayState extends FlxState
 		
 		addGenerator(2, 2, 100);
 		addGenerator(5, 2, 0);
+		addGenerator(8, 2, 0);
 		
 		// Setup adds in proper layering order.
 		add(currentLevel);
@@ -171,7 +174,10 @@ class PlayState extends FlxState
 	{
 		Generator1.connections.push(Generator2);
 		Generator2.connections.push(Generator1);
-		Generator1.power = Generator2.power = (Generator1.power + Generator2.power) * 0.5;
+		
+		var newPower:Float = (Generator1.power + Generator2.power) * 0.5;
+		Generator1.setPower(newPower);
+		Generator2.setPower(newPower);
 	}
 	
 	override public function update():Void
