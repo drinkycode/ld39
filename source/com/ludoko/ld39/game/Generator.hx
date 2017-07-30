@@ -48,20 +48,26 @@ class Generator extends TileObject
 	
 	
 	public var power:Float;
+	public var startingPower:Float;
+	
+	public var connections:Array<Generator>;
 	
 	public function new() 
 	{
 		super();
 		
 		loadGraphic("assets/images/generator.png");
-		
 		immovable = true;
+		
+		connections = new Array<Generator>();
 	}
 	
 	public function resetGenerator(TileX:Int, TileY:Int, Power:Float):Void 
 	{
 		reset(GameLevel.positionAtTileX(TileX), GameLevel.positionAtTileY(TileY));
-		power = Power;
+		power = startingPower = Power;
+		
+		connections = [];
 	}
 	
 }
