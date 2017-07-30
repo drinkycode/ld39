@@ -60,6 +60,15 @@ class Wire extends TileObject
 		centerOffsets();
 	}
 	
+	override public function kill():Void 
+	{
+		super.kill();
+		if (PlayState.instance.currentLevel != null)
+		{
+			PlayState.instance.currentLevel.removeGameObjectFromLayer(this, tileY);
+		}
+	}
+	
 	override public function reset(X:Float, Y:Float):Void 
 	{
 		tileX = GameLevel.tileAtX(X);
@@ -68,6 +77,7 @@ class Wire extends TileObject
 		super.reset(GameLevel.positionAtTileX(tileX), GameLevel.positionAtTileY(tileY));
 		
 		PlayState.instance.checkWireConnections();
+		PlayState.instance.currentLevel.addGameObjectToLayer(this, tileY);
 	}
 	
 }

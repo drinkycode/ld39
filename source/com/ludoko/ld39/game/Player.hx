@@ -2,6 +2,7 @@ package com.ludoko.ld39.game;
 
 import com.ludoko.ld39.game.Wall;
 import com.ludoko.ld39.game.Wire;
+
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -10,7 +11,7 @@ import flixel.FlxSprite;
  * ...
  * @author Michael Lee
  */
-class Player extends FlxSprite
+class Player extends TileObject
 {
 
 	public static inline var PLAYER_MAX_SPEED:Float = 200;
@@ -27,7 +28,7 @@ class Player extends FlxSprite
 	
 	public function new(X:Float, Y:Float) 
 	{
-		super(-9999, -9999);
+		super();
 		
 		loadGraphic("assets/images/player.png", true, 48, 96);
 		animation.add("side", [0], 0, false);
@@ -55,6 +56,9 @@ class Player extends FlxSprite
 	{
 		x = X - PLAYER_WIDTH * 0.5;
 		y = Y - PLAYER_HEIGHT * 0.5;
+		
+		tileY = previousTileY = GameLevel.tileAtY(Y);
+		PlayState.instance.currentLevel.addCharacterToLayer(this, tileY);
 	}
 	
 	public var centerX(get, null):Float;
@@ -71,6 +75,8 @@ class Player extends FlxSprite
 	
 	override public function update():Void 
 	{
+		var previousY:Float = y;
+		
 		moving = false;
 		acceleration.x = acceleration.y = 0;
 		
@@ -137,6 +143,19 @@ class Player extends FlxSprite
 		
 		FlxG.collide(this, Wall.group);
 		FlxG.collide(this, Generator.group);
+		
+		if ((y != previousY))
+		{
+			var newTileY:Int = GameLevel.tileAtY(y + PLAYER_HEIGHT * 0.5);
+			if (previousTileY != newTileY)
+			{
+				if (PlayState.instance.currentLevel.removeCharacterFromLayer(this, previousTileY))
+				{
+					PlayState.instance.currentLevel.addCharacterToLayer(this, newTileY);
+					previousTileY = newTileY;
+				}
+			}
+		}
 	}
 	
 	private function updateMoving():Void 

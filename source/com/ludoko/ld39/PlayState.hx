@@ -59,19 +59,16 @@ class PlayState extends FlxState
 		Wire.preload(10);
 		Generator.preload(3);
 		
+		loadLevel();
+		
 		player = new Player(G.halfWidth, G.halfHeight);
 		gui = new GameGUI();
 		
-		loadLevel();
 		addGenerator(2, 2, 100);
 		addGenerator(5, 2, 0);
 		
 		// Setup adds in proper layering order.
 		add(currentLevel);
-		
-		add(player);
-		add(Wire.group);
-		
 		add(gui);
 	}
 	

@@ -3,6 +3,7 @@ package com.ludoko.ld39;
 import com.ludoko.ld39.game.Generator;
 import com.ludoko.ld39.game.Wall;
 import com.ludoko.ld39.ui.Grid;
+import flixel.FlxObject;
 
 import flixel.FlxG;
 import flixel.group.FlxGroup;
@@ -108,6 +109,30 @@ class GameLevel extends FlxGroup
 		
 		wall = new Wall(tilePixelOffsetX, tilePixelOffsetY + TILE_HEIGHT * levelHeight, TILE_WIDTH * levelWidth, wallSize);
 		Wall.group.add(wall);
+	}
+	
+	public function removeGameObjectFromLayer(Object:FlxObject, Row:Int):Bool
+	{
+		if ((Row < 0) || (Row >= levelHeight)) return false;
+		return layers[Row].removeGameObject(Object);
+	}
+	
+	public function addGameObjectToLayer(Object:FlxObject, Row:Int):Void
+	{
+		if ((Row < 0) || (Row >= levelHeight)) return;
+		layers[Row].addGameObject(Object);
+	}
+	
+	public function removeCharacterFromLayer(Object:FlxObject, Row:Int):Bool
+	{
+		if ((Row < 0) || (Row >= levelHeight)) return false;
+		return layers[Row].removeCharacter(Object);
+	}
+	
+	public function addCharacterToLayer(Object:FlxObject, Row:Int):Void
+	{
+		if ((Row < 0) || (Row >= levelHeight)) return;
+		layers[Row].addCharacter(Object);
 	}
 	
 	public function addGenerator(TileX:Int, TileY:Int, Power:Float):Generator

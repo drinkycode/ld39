@@ -47,6 +47,9 @@ class Generator extends TileObject
 	}
 	
 	
+	public static inline var HITBOX_WIDTH:Int = 48;
+	public static inline var HITBOX_HEIGHT:Int = 48;
+	
 	public var power:Float;
 	public var startingPower:Float;
 	
@@ -58,6 +61,10 @@ class Generator extends TileObject
 		
 		loadGraphic("assets/images/generator.png");
 		immovable = true;
+		
+		width = HITBOX_WIDTH;
+		height = HITBOX_HEIGHT;
+		offset.y = 64 - HITBOX_HEIGHT;
 		
 		connections = new Array<Generator>();
 	}
