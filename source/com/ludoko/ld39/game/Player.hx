@@ -164,7 +164,7 @@ class Player extends FlxSprite
 		
 		G.setOPosition(centerX + createOffsetX, centerY + createOffsetY);
 		
-		if (!FlxG.overlap(Wire.group, G.o) && !FlxG.overlap(Generator.group, G.o))
+		if (!(Util.simpleGroupOverlap(G.o, Wire.group) || Util.simpleGroupOverlap(G.o, Generator.group)))
 		{
 			Wire.create(centerX + createOffsetX, centerY + createOffsetY);
 			return true;

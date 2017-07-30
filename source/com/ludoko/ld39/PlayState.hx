@@ -129,13 +129,6 @@ class PlayState extends FlxState
 			}
 		}
 		
-		/*for (i in 0 ... connections.length)
-		{
-			var row:Array<Int> = connections[i];
-			trace(row);
-		}
-		trace("");*/
-		
 		for (i in 0 ... activeGenerators.length)
 		{
 			for (j in i + 1 ... activeGenerators.length)
@@ -192,9 +185,13 @@ class PlayState extends FlxState
 		{
 			G.setOPosition(FlxG.mouse.x, FlxG.mouse.y);
 		
-			if (!FlxG.overlap(Wire.group, G.o))
+			if (!(Util.simpleGroupOverlap(G.o, Wire.group) || Util.simpleGroupOverlap(G.o, Generator.group)))
 			{
 				Wire.create(FlxG.mouse.x, FlxG.mouse.y);
+			}
+			else
+			{
+				trace("Cannot create wire at " + FlxG.mouse.x + ", " + FlxG.mouse.y);
 			}
 		}
 	}
