@@ -161,8 +161,16 @@ class Player extends FlxSprite
 				createOffsetY = WIRE_CREATE_OFFSET;
 		}
 		
-		Wire.create(centerX + createOffsetX, centerY + createOffsetY);
-		return true;
+		G.setOPosition(centerX + createOffsetX, centerY + createOffsetY);
+		
+		if (!FlxG.overlap(Wire.group, G.o))
+		{
+			Wire.create(centerX + createOffsetX, centerY + createOffsetY);
+			return true;
+		}
+		
+		trace("Cannot place wire at " + centerX + createOffsetX + ", " + centerY + createOffsetY);
+		return false;
 	}
 	
 }

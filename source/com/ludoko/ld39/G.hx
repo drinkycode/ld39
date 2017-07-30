@@ -1,6 +1,8 @@
 package com.ludoko.ld39;
 
+import flixel.FlxBasic;
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.util.FlxPoint;
 import flixel.util.FlxSave;
 
@@ -27,6 +29,10 @@ class G
 		halfHeight = Math.floor(FlxG.height * 0.5);
 		
 		FlxG.mouse.useSystemCursor = UseSystemCursor;
+		
+		// Make helper FlxObject size to 1x1 pixel.
+		o.width = 1;
+		o.height = 1;
 	}
 	
 	
@@ -40,5 +46,12 @@ class G
 	
 	// Quick helper variables.
 	public static var p:FlxPoint = new FlxPoint();
+	public static var o:FlxObject = new FlxObject();
+	
+	public static function setOPosition(X:Float, Y:Float):Void
+	{
+		o.x = X;
+		o.y = Y;
+	}
 	
 }
