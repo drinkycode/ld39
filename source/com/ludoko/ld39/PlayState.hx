@@ -89,9 +89,114 @@ class PlayState extends FlxState
 		activeGenerators.push(generator);
 	}
 	
+	public function checkWireConnections():Void
+	{
+		var connections:Array<Array<Int>> = new Array<Array<Int>>();
+		
+		for (j in 0 ... currentLevel.levelHeight)
+		{
+			var row:Array<Int> = new Array<Int>();
+			for (i in 0 ... currentLevel.levelWidth)
+			{
+				row.push(0);
+			}
+			connections.push(row);
+		}
+		
+		for (i in 0 ... activeGenerators.length)
+		{
+			connections[activeGenerators[i].tileY][activeGenerators[i].tileX] = 1;
+		}
+		
+		for (i in 0 ... Wire.group.members.length)
+		{
+			var wire:Wire = cast Wire.group.members[i];
+			if (!wire.alive) continue;
+			connections[wire.tileY][wire.tileX] = 1;
+		}
+		
+		var index:Int = 2;
+		
+		for (j in 0 ... currentLevel.levelHeight)
+		{
+			var row:Array<Int> = new Array<Int>();
+			for (i in 0 ... currentLevel.levelWidth)
+			{
+				if (buildConnections(i, j, connections, index))
+				{
+					index++;
+				}
+			}
+		}
+		
+		/*for (i in 0 ... connections.length)
+		{
+			var row:Array<Int> = connections[i];
+			trace(row);
+		}
+		trace("");*/
+		
+		for (i in 0 ... activeGenerators.length)
+		{
+			for (j in i + 1 ... activeGenerators.length)
+			{
+				if (activeGenerators[i].hasConnection(activeGenerators[j])) continue;
+				
+				if (connections[activeGenerators[i].tileY][activeGenerators[i].tileX] == connections[activeGenerators[j].tileY][activeGenerators[j].tileX])
+				{
+					addGeneratorConnection(activeGenerators[i], activeGenerators[j]);
+					trace("New connection between " + i + " " + j);
+				}
+			}
+		}
+	}
+	
+	private function buildConnections(X:Int, Y:Int, Connections:Array<Array<Int>>, Index:Int):Bool
+	{
+		if (Connections[Y][X] != 1) return false;
+		
+		Connections[Y][X] = Index;
+		
+		if (X > 0)
+		{
+			buildConnections(X - 1, Y, Connections, Index);
+		}
+		if (Y > 0)
+		{
+			buildConnections(X, Y - 1, Connections, Index);
+		}
+		if (X < currentLevel.levelWidth - 1)
+		{
+			buildConnections(X + 1, Y, Connections, Index);
+		}
+		if (Y < currentLevel.levelHeight - 1)
+		{
+			buildConnections(X, Y + 1, Connections, Index);
+		}
+		
+		return true;
+	}
+	
+	private function addGeneratorConnection(Generator1:Generator, Generator2:Generator):Void
+	{
+		Generator1.connections.push(Generator2);
+		Generator2.connections.push(Generator1);
+		Generator1.power = Generator2.power = (Generator1.power + Generator2.power) * 0.5;
+	}
+	
 	override public function update():Void
 	{
 		super.update();
+		
+		if (FlxG.mouse.justPressed)
+		{
+			G.setOPosition(FlxG.mouse.x, FlxG.mouse.y);
+		
+			if (!FlxG.overlap(Wire.group, G.o))
+			{
+				Wire.create(FlxG.mouse.x, FlxG.mouse.y);
+			}
+		}
 	}
 	
 }

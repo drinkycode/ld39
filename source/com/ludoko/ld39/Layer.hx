@@ -16,7 +16,7 @@ class Layer extends FlxGroup
 	
 	public var gameObjects:FlxGroup;
 	public var characters:FlxGroup;
-	public var ui:FlxGroup();
+	public var ui:FlxGroup;
 	
 	public function new(Row:Int) 
 	{

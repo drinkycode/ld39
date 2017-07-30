@@ -64,10 +64,18 @@ class Generator extends TileObject
 	
 	public function resetGenerator(TileX:Int, TileY:Int, Power:Float):Void 
 	{
+		tileX = TileX;
+		tileY = TileY;
+		
 		reset(GameLevel.positionAtTileX(TileX), GameLevel.positionAtTileY(TileY));
 		power = startingPower = Power;
 		
 		connections = [];
+	}
+	
+	public function hasConnection(ConnectedGenerator:Generator):Bool
+	{
+		return connections.indexOf(ConnectedGenerator) != -1;
 	}
 	
 }

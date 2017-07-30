@@ -22,12 +22,12 @@ class GameLevel extends FlxGroup
 
 	public static function tilePositionAtX(X:Float)
 	{
-		return positionAtTileX(getTileAtX(X));
+		return positionAtTileX(tileAtX(X));
 	}
 	
 	public static function tilePositionAtY(Y:Float)
 	{
-		return positionAtTileY(getTileAtY(Y));
+		return positionAtTileY(tileAtY(Y));
 	}
 	
 	public static function positionAtTileX(TileX:Int):Int
@@ -40,12 +40,12 @@ class GameLevel extends FlxGroup
 		return TileY * GameLevel.TILE_HEIGHT + GameLevel.tilePixelOffsetY;
 	}
 	
-	public static function getTileAtX(X:Float):Int
+	public static function tileAtX(X:Float):Int
 	{
 		return Math.floor((X - GameLevel.tilePixelOffsetX) / TILE_WIDTH);
 	}
 	
-	public static function getTileAtY(Y:Float):Int
+	public static function tileAtY(Y:Float):Int
 	{
 		return Math.floor((Y - GameLevel.tilePixelOffsetY) / TILE_HEIGHT);
 	}
