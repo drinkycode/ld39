@@ -1,5 +1,6 @@
-package com.ludoko.ld39;
+package com.ludoko.ld39.game;
 
+import com.ludoko.ld39.game.Wall;
 import com.ludoko.ld39.game.Wire;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -133,6 +134,8 @@ class Player extends FlxSprite
 		}
 		
 		super.update();
+		
+		FlxG.collide(this, Wall.group);
 	}
 	
 	private function updateMoving():Void 

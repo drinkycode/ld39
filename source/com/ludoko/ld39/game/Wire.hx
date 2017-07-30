@@ -7,7 +7,7 @@ import flixel.group.FlxGroup;
  * ...
  * @author Michael Lee
  */
-class Wire extends FlxSprite
+class Wire extends TileObject
 {
 	
 	public static var group:FlxGroup;
@@ -47,12 +47,12 @@ class Wire extends FlxSprite
 	}
 	
 	
-	public static inline var HITBOX_WIDTH:Int = 64;
-	public static inline var HITBOX_HEIGHT:Int = 64;
+	public static inline var HITBOX_WIDTH:Int = 48;
+	public static inline var HITBOX_HEIGHT:Int = 48;
 	
 	public function new() 
 	{
-		super( -9999, -9999);
+		super();
 		loadGraphic("assets/images/wire.png");
 		
 		width = HITBOX_WIDTH;
@@ -62,10 +62,10 @@ class Wire extends FlxSprite
 	
 	override public function reset(X:Float, Y:Float):Void 
 	{
-		var createAtX:Float = X;
-		var createAtY:Float = Y;
+		var createAtX:Float = GameLevel.findTilePositionAtX(X);
+		var createAtY:Float = GameLevel.findTilePositionAtY(Y);
 		
-		super.reset(createAtX - HITBOX_WIDTH * 0.5, createAtY - HITBOX_HEIGHT * 0.5);
+		super.reset(createAtX, createAtY);
 	}
 	
 }

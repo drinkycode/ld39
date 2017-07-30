@@ -7,7 +7,7 @@ import flixel.group.FlxGroup;
  * ...
  * @author Michael Lee
  */
-class Generator extends FlxSprite
+class Generator extends TileObject
 {
 
 	public static var group:FlxGroup;
@@ -48,7 +48,7 @@ class Generator extends FlxSprite
 	
 	public function new() 
 	{
-		super( -9999, -9999);
+		super();
 		loadGraphic("assets/images/generator.png");
 	}
 	

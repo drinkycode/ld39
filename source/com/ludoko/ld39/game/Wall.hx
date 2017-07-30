@@ -13,18 +13,12 @@ class Wall extends FlxObject
 
 	public static var group:FlxGroup;
 	
-	public static function preload(Amount:Int):FlxGroup
+	public static function preload():FlxGroup
 	{
 		if (group == null)
 		{
 			group = new FlxGroup();
 		}
-		
-		for (i in 0 ... Amount)
-		{
-			createInstance();
-		}
-		
 		return group;
 	}
 	

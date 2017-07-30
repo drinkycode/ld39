@@ -11,32 +11,15 @@ import flixel.group.FlxGroup;
 class Grid extends FlxGroup
 {
 
-	public static inline var GRID_WIDTH:Int 	= 48;
-	public static inline var GRID_HEIGHT:Int 	= 48;
-	
-	public var gridWidth:Int;
-	public var gridHeight:Int;
-	
 	public function new(Width:Int, Height:Int) 
 	{
 		super();
 		
-		setupGrid(Width, Height);
-	}
-	
-	public function setupGrid(Width:Int, Height:Int):Void
-	{
-		gridWidth = Width;
-		gridHeight = Height;
-		
-		var startingOffsetX:Float = Math.floor((FlxG.width - (Width * GRID_WIDTH)) * 0.5);
-		var startingOffsetY:Float = Math.floor((FlxG.height - (Height * GRID_HEIGHT)) * 0.5);
-		
-		for (i in 0 ... gridWidth)
+		for (i in 0 ... Width)
 		{
-			for (j in 0 ... gridHeight)
+			for (j in 0 ... Height)
 			{
-				var tile:FlxSprite = new FlxSprite(i * GRID_WIDTH + startingOffsetX, j * GRID_HEIGHT + startingOffsetY, "assets/images/grid.png");
+				var tile:FlxSprite = new FlxSprite(GameLevel.getPositionAtTileX(i), GameLevel.getPositionAtTileY(j), "assets/images/grid.png");
 				add(tile);
 			}
 		}

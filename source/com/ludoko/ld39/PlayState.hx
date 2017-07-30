@@ -2,6 +2,7 @@ package com.ludoko.ld39;
 
 import com.ludoko.ld39.G;
 import com.ludoko.ld39.game.Generator;
+import com.ludoko.ld39.game.Player;
 import com.ludoko.ld39.game.Wire;
 import com.ludoko.ld39.ui.Grid;
 
