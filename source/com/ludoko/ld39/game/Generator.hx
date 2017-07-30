@@ -52,7 +52,10 @@ class Generator extends TileObject
 	public function new() 
 	{
 		super();
+		
 		loadGraphic("assets/images/generator.png");
+		
+		immovable = true;
 	}
 	
 	public function resetGenerator(TileX:Int, TileY:Int, Power:Float):Void 

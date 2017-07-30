@@ -136,6 +136,7 @@ class Player extends FlxSprite
 		super.update();
 		
 		FlxG.collide(this, Wall.group);
+		FlxG.collide(this, Generator.group);
 	}
 	
 	private function updateMoving():Void 
