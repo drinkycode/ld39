@@ -71,14 +71,14 @@ class GeneratorUI extends FlxSpriteGroup
 		
 		// 04B_03B
 		currentPower = new FlxText(0, 0, UI_WIDTH, "999");
-		currentPower.setFormat(GameGUI.FONT_DEFINITELY, 16, 0xffffff, "center");
+		currentPower.setFormat(GameGUI.FONT_TILLANA, 16, 0xffffff, "center");
 		add(currentPower);
 		
 		totalPower = new FlxText(0, 0, UI_WIDTH, "999");
-		totalPower.setFormat(GameGUI.FONT_DEFINITELY, 16, 0xffffff, "center");
+		totalPower.setFormat(GameGUI.FONT_TILLANA, 16, 0xffffff, "center");
 		add(totalPower);
 		
-		alpha = 0.6;
+		alpha = 0.8;
 	}
 	
 	override public function kill():Void 
@@ -99,8 +99,8 @@ class GeneratorUI extends FlxSpriteGroup
 		currentPower.x = X - UI_WIDTH + 25;
 		currentPower.y = Y - Y_SPACING - 5;
 		
-		totalPower.x = X - UI_WIDTH * 0.5 + 25;
-		totalPower.y = Y - Y_SPACING;
+		totalPower.x = X - UI_WIDTH * 0.5 + 20;
+		totalPower.y = Y - Y_SPACING - 5;
 		
 		currentPower.text = totalPower.text = Power + "";
 	}

@@ -14,6 +14,7 @@ class GameGUI extends FlxGroup
 
 	public static inline var FONT_04B03B:String = "assets/fonts/04B_03B.TTF";
 	public static inline var FONT_DEFINITELY:String = "assets/fonts/definitely_possible.ttf";
+	public static inline var FONT_TILLANA:String = "assets/fonts/Tillana-ExtraBold.ttf";
 	
 	public var power:FlxText;
 	
