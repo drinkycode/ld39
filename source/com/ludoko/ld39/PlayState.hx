@@ -270,8 +270,27 @@ class PlayState extends FlxState
 			}
 		}
 		
-		checkPowerAreas();
+		// Finally need to clean up connections with any shared generators.
+		for (i in 0 ... activeGenerators.length)
+		{
+			if (activeGenerators[i].connections.length <= 0) continue;
+			
+			for (j in i + 1 ... activeGenerators.length)
+			{
+				if (activeGenerators[i].hasConnection(activeGenerators[j]))
+				{
+					for (k in j + 1 ... activeGenerators.length)
+					{
+						if (activeGenerators[i].hasConnection(activeGenerators[k]) && activeGenerators[j].hasConnection(activeGenerators[k]))
+						{
+							trace("Have three-way contract.");
+						}
+					}
+				}
+			}
+		}
 		
+		checkPowerAreas();
 		checkLevelComplete();
 	}
 	
