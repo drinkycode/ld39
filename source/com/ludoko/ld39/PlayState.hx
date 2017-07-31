@@ -138,6 +138,23 @@ class PlayState extends FlxState
 		
 		levelData = new TiledLevel("assets/data/level.tmx");
 		levelData.loadObjects("entities");
+		
+		// Reorder generator so source generator is always 0-index.
+		var sourceGenerator:Generator = null;
+		for (i in 0 ... activeGenerators.length)
+		{
+			if (activeGenerators[i].source)
+			{
+				sourceGenerator = activeGenerators[i];
+				break;
+			}
+		}
+		
+		if (sourceGenerator != null)
+		{
+			activeGenerators.remove(sourceGenerator);
+			activeGenerators.insert(0, sourceGenerator);
+		}
 	}
 	
 	public function addGenerator(TileX:Int, TileY:Int, Power:Float = 100, NeededPower:Array<Float>, Source:Bool = false):Generator
@@ -210,7 +227,7 @@ class PlayState extends FlxState
 				if (isSurrounded)
 				{
 					sparkie.die();
-					addGenerator(sparkieTileX, sparkieTileY, 25, null);
+					addGenerator(sparkieTileX, sparkieTileY, 25, null, false);
 					connections[sparkieTileY][sparkieTileX] = 1;
 				}
 			}
@@ -270,8 +287,13 @@ class PlayState extends FlxState
 			}
 		}
 		
+		// Figure out generator power distribution here.
+		
+		updatePowerDistribution();
+		
+		
 		// Finally need to clean up connections with any shared generators.
-		for (i in 0 ... activeGenerators.length)
+		/*for (i in 0 ... activeGenerators.length)
 		{
 			if (activeGenerators[i].connections.length <= 0) continue;
 			
@@ -283,12 +305,27 @@ class PlayState extends FlxState
 					{
 						if (activeGenerators[i].hasConnection(activeGenerators[k]) && activeGenerators[j].hasConnection(activeGenerators[k]))
 						{
-							trace("Have three-way contract.");
+							var totalPower:Float = activeGenerators[i].power + activeGenerators[j].power + activeGenerators[k].power;
+							var powerSplit:Float = totalPower / 3;
+							
+							trace("Have three-way contract with total power " + totalPower);
+							
+							redoGeneratorContracts(activeGenerators[i], activeGenerators[j], powerSplit);
+							redoGeneratorContracts(activeGenerators[j], activeGenerators[k], powerSplit);
+							redoGeneratorContracts(activeGenerators[i], activeGenerators[k], powerSplit);
 						}
 					}
 				}
 			}
-		}
+		}*/
+		
+		/*for (i in 0 ... activeGenerators.length)
+		{
+			for (j in 0 ... activeGenerators[i].connections.length)
+			{
+				trace("Generator " + i + " has contract of power " + activeGenerators[i].connections[j].power + " with generator " + activeGenerators.indexOf(activeGenerators[i].connections[j].sourceGenerator));
+			}
+		}*/
 		
 		checkPowerAreas();
 		checkLevelComplete();
@@ -364,6 +401,58 @@ class PlayState extends FlxState
 		
 		Generator1.addConnection(Generator2, newPower - Generator1.power);
 		Generator2.addConnection(Generator1, newPower - Generator2.power);
+	}
+	
+	private function updatePowerDistribution():Void
+	{
+		// Zero out all power connections.
+		for (i in 0 ... activeGenerators.length)
+		{
+			for (j in 0 ... activeGenerators[i].connections.length)
+			{
+				activeGenerators[i].connections[j].power = 0;
+			}
+		}
+		
+		var rootGenerator:Generator = activeGenerators[0];
+		var splitSourcePower:Float = rootGenerator.power / (rootGenerator.connections.length + 1);
+		for (i in 0 ... rootGenerator.connections.length)
+		{
+			redoGeneratorContracts(rootGenerator, rootGenerator.connections[i].sourceGenerator, splitSourcePower);
+		}
+		
+		/*for (i in 0 ... rootGenerator.connections.length)
+		{
+			var generator:Generator = rootGenerator.connections[i].sourceGenerator;
+			
+			var newConnections:Int = 0;
+			for (j in 0 ... generator.connections.length)
+			{
+				var depth:Int = generator.connections[j].sourceGenerator.depthFromSource();
+				//trace("Generator connection depth " + depth + " for generator " + activeGenerators.indexOf(generator.connections[j].sourceGenerator));
+				if (depth >= 1)
+				{
+					newConnections++;
+				}
+			}
+			
+			var splitPower:Float = generator.power / (newConnections + 1);
+			//trace("Has connections " + newConnections + " with power split " + splitPower);
+			
+			for (j in 0 ... generator.connections.length)
+			{
+				if (generator.connections[j].sourceGenerator.depthFromSource() >= 1)
+				{
+					redoGeneratorContracts(generator, generator.connections[j].sourceGenerator, splitPower);
+				}
+			}
+		}*/
+	}
+	
+	private function redoGeneratorContracts(Generator1:Generator, Generator2:Generator, Power:Float):Void
+	{
+		Generator1.redoConnection(Generator2, -Power);
+		Generator2.redoConnection(Generator1, Power);
 	}
 	
 	private function checkPowerAreas():Void

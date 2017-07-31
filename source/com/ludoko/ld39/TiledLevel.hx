@@ -94,7 +94,7 @@ class TiledLevel extends TiledMap
 					{
 						levels.push(Std.parseFloat(obj.custom.get("level" + i)));
 					}
-					PlayState.instance.addGenerator(getTileX(x), getTileY(y), 0, levels);
+					PlayState.instance.addGenerator(getTileX(x), getTileY(y), 0, levels, false);
 				case "sparkie":
 					PlayState.instance.addSparkie(getTileX(x), getTileY(y));
 					

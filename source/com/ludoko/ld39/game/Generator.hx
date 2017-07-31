@@ -36,7 +36,7 @@ class Generator extends TileObject
 		return o;
 	}
 
-	public static function create(TileX:Int, TileY:Int, Power:Float, NeededPower:Array<Float>, Source:Bool):Generator
+	public static function create(TileX:Int, TileY:Int, Power:Float, NeededPower:Array<Float>, Source:Bool = false):Generator
 	{
 		var o:Generator = cast group.getFirstDead();
 		if (o == null)
@@ -65,7 +65,7 @@ class Generator extends TileObject
 	}
 	
 	public var startingPower:Float;
-	public var source:Bool;
+	public var source:Bool = false;
 	
 	public var neededPower:Array<Float>;
 	
@@ -89,7 +89,7 @@ class Generator extends TileObject
 		connections = new Array<PowerContract>();
 	}
 	
-	public function resetGenerator(TileX:Int, TileY:Int, Power:Float, NeededPower:Array<Float>, Source:Bool):Void 
+	public function resetGenerator(TileX:Int, TileY:Int, Power:Float, NeededPower:Array<Float>, Source:Bool = false):Void 
 	{
 		tileX = TileX;
 		tileY = TileY;
@@ -109,7 +109,7 @@ class Generator extends TileObject
 	
 	public function hasSource(Deep:Int = 0):Bool
 	{
-		if (Deep == 3)
+		if (Deep >= 3)
 		{
 			return source;
 		}
@@ -130,17 +130,47 @@ class Generator extends TileObject
 		return false;
 	}
 	
+	public function depthFromSource(Depth:Int = 0, Deep:Int = 0):Int
+	{
+		if (Deep >= 5)
+		{
+			return Depth;
+		}
+		
+		if (source)
+		{
+			return Depth;
+		}
+		
+		var newDepth:Int = 99;
+		for (i in 0 ... connections.length)
+		{
+			var d:Int = connections[i].sourceGenerator.depthFromSource(Depth + 1, Deep + 1);
+			if (d < newDepth)
+			{
+				newDepth = d;
+			}
+		}
+		
+		return newDepth;
+	}
+	
 	public function hasConnection(ConnectedGenerator:Generator):Bool
+	{
+		return (findContract(ConnectedGenerator) != null);
+	}
+	
+	public function findContract(ConnectedGenerator:Generator):PowerContract
 	{
 		var connected:Bool = false;
 		for (i in 0 ... connections.length)
 		{
 			if (connections[i].sourceGenerator == ConnectedGenerator)
 			{
-				return true;
+				return connections[i];
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	public function addConnection(OtherGenerator:Generator, AddedPower:Float):Void
@@ -164,6 +194,12 @@ class Generator extends TileObject
 		}
 		
 		checkGeneratorPower();
+	}
+	
+	public function redoConnection(OtherGenerator:Generator, PowerMagnitude:Float):Void
+	{
+		var contract:PowerContract = findContract(OtherGenerator);
+		contract.power = PowerMagnitude;
 	}
 	
 	override public function update():Void 
