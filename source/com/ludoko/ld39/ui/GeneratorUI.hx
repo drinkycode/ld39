@@ -52,9 +52,9 @@ class GeneratorUI extends FlxSpriteGroup
 	
 	
 	public static inline var UI_WIDTH:Int = 98;
-	public static inline var UI_HEIGHT:Int = 74;
+	public static inline var UI_HEIGHT:Int = 50;
 	
-	public static inline var Y_SPACING:Int = 76;
+	public static inline var Y_SPACING:Int = 70;
 	
 	public var back:FlxSprite;
 	public var currentPower:FlxText;
@@ -97,10 +97,10 @@ class GeneratorUI extends FlxSpriteGroup
 		PlayState.instance.currentLevel.addUIToLayer(this, tileY);
 		
 		currentPower.x = X - UI_WIDTH + 25;
-		currentPower.y = Y - Y_SPACING - 17;
+		currentPower.y = Y - Y_SPACING - 5;
 		
 		totalPower.x = X - UI_WIDTH * 0.5 + 25;
-		totalPower.y = Y - Y_SPACING + 3;
+		totalPower.y = Y - Y_SPACING;
 		
 		currentPower.text = totalPower.text = Power + "";
 	}

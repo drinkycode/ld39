@@ -39,7 +39,10 @@ class PlayState extends FlxState
 	
 	public var connections:Array<Array<Int>>;
 	
-	public var maxLevels = 16;
+	public var maxLevels:Int = 16;
+	public var level:Int = 0;
+	
+	public var levelTimer:Float = 0;
 	
 	override public function create():Void
 	{
@@ -247,6 +250,26 @@ class PlayState extends FlxState
 			activeGenerators[i].redistributePower();
 		}
 		
+		//Start level check to see if player has correct power levels
+		var levelComplete:Bool = true;
+		for (i in 0 ... activeGenerators.length)
+		{
+			if (activeGenerators[i].neededPower != null)
+			{
+				if (activeGenerators[i].power < activeGenerators[i].neededPower[level])
+				{
+					levelComplete = false;
+					break;
+				}
+			}
+		}
+		if (levelComplete)
+		{
+			level++;
+			levelTimer = 3;
+			//Set level to refresh
+		}
+		
 		checkPowerAreas();
 	}
 	
@@ -318,6 +341,22 @@ class PlayState extends FlxState
 				{
 					obj.kill();
 					checkWireConnections(false);
+				}
+			}
+		}
+		
+		if (levelTimer > 0)
+		{
+			levelTimer -= FlxG.elapsed;
+			
+			if (levelTimer <= 0)
+			{
+				for (i in 0 ... activeGenerators.length)
+				{
+					if (activeGenerators[i].neededPower != null)
+					{
+						activeGenerators[i].setPower(activeGenerators[i].power);
+					}
 				}
 			}
 		}

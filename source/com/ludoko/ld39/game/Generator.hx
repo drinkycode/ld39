@@ -53,7 +53,7 @@ class Generator extends TileObject
 	
 	public var power:Float;
 	public var startingPower:Float;
-	public var totalPower:Float;
+	//public var totalPower:Float;
 	public var neededPower:Array<Float>;
 	
 	public var checked:Bool = false;
@@ -82,8 +82,9 @@ class Generator extends TileObject
 		tileY = TileY;
 		
 		reset(GameLevel.positionAtTileX(TileX), GameLevel.positionAtTileY(TileY));
-		power = startingPower = totalPower = Power;
+		power = startingPower = Power;
 		neededPower = NeededPower;
+		//totalPower = neededPower[0];
 		
 		connections = [];
 		
@@ -123,14 +124,22 @@ class Generator extends TileObject
 	{
 		power = NewPower;
 		
-		if (NewPower <= totalPower)
+		//if (NewPower <= totalPower)
+		//{
+			//ui.updatePower(power);
+		//}
+		//else
+		//{
+			//totalPower = NewPower;
+			//ui.updatePower(power, totalPower);
+		//}
+		if (neededPower == null)
 		{
 			ui.updatePower(power);
 		}
 		else
 		{
-			totalPower = NewPower;
-			ui.updatePower(power, totalPower);
+			ui.updatePower(power, neededPower[PlayState.instance.level]);
 		}
 	}	
 	
