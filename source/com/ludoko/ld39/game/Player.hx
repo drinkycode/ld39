@@ -28,6 +28,7 @@ class Player extends TileObject
 	
 	
 	public var moving:Bool = false;
+	public var placing:Bool = false;
 	
 	private var _hurtTimer:Float = 0;
 	
@@ -36,9 +37,19 @@ class Player extends TileObject
 		super();
 		
 		loadGraphic("assets/images/player.png", true, 48, 96);
-		animation.add("side", [0], 0, false);
-		animation.add("down", [1], 0, false);
-		animation.add("up", [2], 0, false);
+		animation.add("side", [10], 0, false);
+		animation.add("down", [0], 0, false);
+		animation.add("up", [5], 0, false);
+		animation.add("sidewalk", [11, 10, 12, 10], 8, true);
+		animation.add("downwalk", [1, 0, 2, 0], 8, true);
+		animation.add("upwalk", [6, 6, 5, 7, 7, 5], 8, true);
+		animation.add("sideplace", [13, 13], 4, false);
+		animation.add("downplace", [3, 3], 4, false);
+		animation.add("upplace", [8, 8], 4, false);
+		animation.add("sidehurt", [14, 14], 2, false);
+		animation.add("downhurt", [4, 4], 2, false);
+		animation.add("uphurt", [9, 9], 2, false);
+		animation.add("die", [15, 16, 17, 18, 19], 10, false);
 		
 		setFacingFlip(FlxObject.LEFT, true, false);
 		setFacingFlip(FlxObject.RIGHT, false, false);
@@ -61,7 +72,9 @@ class Player extends TileObject
 	
 	override public function kill():Void 
 	{
-		super.kill();
+		//super.kill();
+		alive = false;
+		animation.play("die");
 	}
 	
 	public function setCenteredPosition(X:Float, Y:Float):Void
@@ -92,63 +105,116 @@ class Player extends TileObject
 		moving = false;
 		acceleration.x = acceleration.y = 0;
 		
-		if (FlxG.keys.anyPressed(["left"]))
+		if (alive)
 		{
-			updateMoving();
-			acceleration.x = -PLAYER_ACCELERATION;
-		}
-		else if (FlxG.keys.anyPressed(["right"]))
-		{
-			updateMoving();
-			acceleration.x = PLAYER_ACCELERATION;
-		}
-		if (FlxG.keys.anyPressed(["up"]))
-		{
-			updateMoving();
-			acceleration.y = -PLAYER_ACCELERATION;
-		}
-		else if (FlxG.keys.anyPressed(["down"]))
-		{
-			updateMoving();
-			acceleration.y = PLAYER_ACCELERATION;
-		}
-		
-		if (FlxG.keys.anyJustPressed(["x"]))
-		{
-			addWire();
-		}
-		
-		if (!moving)
-		{
-			drag.x = drag.y = PLAYER_DRAG;
-		}
-		else
-		{
-			if (acceleration.x == 0)
+			if (FlxG.keys.anyPressed(["left"]))
 			{
-				if (acceleration.y < 0)
+				updateMoving();
+				acceleration.x = -PLAYER_ACCELERATION;
+			}
+			else if (FlxG.keys.anyPressed(["right"]))
+			{
+				updateMoving();
+				acceleration.x = PLAYER_ACCELERATION;
+			}
+			else
+			{
+				drag.x = PLAYER_DRAG;
+			}
+			
+			if (FlxG.keys.anyPressed(["up"]))
+			{
+				updateMoving(false);
+				acceleration.y = -PLAYER_ACCELERATION;
+			}
+			else if (FlxG.keys.anyPressed(["down"]))
+			{
+				updateMoving(false);
+				acceleration.y = PLAYER_ACCELERATION;
+			}
+			else
+			{
+				drag.y = PLAYER_DRAG;
+			}
+			
+			if (FlxG.keys.anyJustPressed(["x"]))
+			{
+				addWire();
+			}
+		
+			if (!moving)
+			{
+				drag.x = drag.y = PLAYER_DRAG;
+				if (!(placing || _hurtTimer>0) || animation.finished && alive)
 				{
-					animation.play("up");
-					facing = FlxObject.UP;
-				}
-				else
-				{
-					animation.play("down");
-					facing = FlxObject.DOWN;
+					switch(facing)
+					{
+						case FlxObject.UP:
+							animation.play("up");
+						case FlxObject.DOWN:
+							animation.play("down");
+						default:
+							animation.play("side");
+					}
+					placing = false;
 				}
 			}
 			else
 			{
-				animation.play("side");
-				if (acceleration.x < 0)
+				if (acceleration.x == 0)
 				{
-					facing = FlxObject.LEFT;
+					if (acceleration.y < 0)
+					{
+						facing = FlxObject.UP;
+					}
+					else
+					{
+						facing = FlxObject.DOWN;
+					}
 				}
 				else
 				{
-					facing = FlxObject.RIGHT;
+					if (acceleration.x < 0)
+					{
+						facing = FlxObject.LEFT;
+					}
+					else
+					{
+						facing = FlxObject.RIGHT;
+					}
+				}
+				
+				if (!(_hurtTimer>0) || animation.finished && alive)
+				{
+					switch(facing)
+					{
+						case FlxObject.UP:
+							animation.play("upwalk");
+						case FlxObject.DOWN:
+							animation.play("downwalk");
+						default:
+							animation.play("sidewalk");
+					}
+					placing = false;
+				}
+				else if (_hurtTimer > 0)
+				{
+					switch(facing)
+					{
+						case FlxObject.UP:
+							animation.play("uphurt");
+						case FlxObject.DOWN:
+							animation.play("downhurt");
+						default:
+							animation.play("sidehurt");
+					}
 				}
 			}
+			
+		}
+		else
+		{
+			drag.x = drag.y = PLAYER_DRAG;
 		}
 		
 		super.update();
@@ -170,12 +236,24 @@ class Player extends TileObject
 		}
 		
 		_hurtTimer -= FlxG.elapsed;
+		
+		//if (!alive && animation.name == "die" && animation.finished)
+		//{
+			//exists = false;
+		//}
 	}
 	
-	private function updateMoving():Void 
+	private function updateMoving(xAxis:Bool = true):Void 
 	{
 		moving = true;
-		drag.x = drag.y = 0;
+		if (xAxis)
+		{
+			drag.x = 0;
+		} 
+		else
+		{
+			drag.y = 0;
+		}
 	}
 	
 	public function addWire():Bool
@@ -199,6 +277,17 @@ class Player extends TileObject
 		
 		if (!(Util.simpleGroupOverlap(G.o, Wire.group) || Util.simpleGroupOverlap(G.o, Generator.group)))
 		{
+			switch(facing)
+			{
+				case FlxObject.UP:
+					animation.play("upplace");
+				case FlxObject.DOWN:
+					animation.play("downplace");
+				default:
+					animation.play("sideplace");
+			}
+			placing = true;
+			
 			Wire.create(centerX + createOffsetX, centerY + createOffsetY);
 			return true;
 		}
@@ -209,12 +298,25 @@ class Player extends TileObject
 	
 	override public function hurt(Damage:Float):Void 
 	{
-		if (_hurtTimer > 0) return;
+		if (_hurtTimer > 0 || !alive) return;
 		
 		super.hurt(Damage);
 		_hurtTimer = 1;
 		
-		FlxSpriteUtil.flicker(this, 1);
+		if (alive)
+		{
+			switch(facing)
+			{
+				case FlxObject.UP:
+					animation.play("uphurt");
+				case FlxObject.DOWN:
+					animation.play("downhurt");
+				default:
+					animation.play("sidehurt");
+			}
+			FlxSpriteUtil.flicker(this, 1);
+		}
 	}
+	
 	
 }
