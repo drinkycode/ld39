@@ -145,6 +145,21 @@ class PlayState extends FlxState
 			}
 		}
 		
+		// Clean up old connections
+		for (i in 0 ... activeGenerators.length)
+		{
+			var j:Int = activeGenerators[i].connections.length - 1;
+			while (j >= 0)
+			{
+				if (connections[activeGenerators[i].tileY][activeGenerators[i].tileX] != connections[activeGenerators[i].connections[j].tileY][activeGenerators[i].connections[j].tileX])
+				{
+					removeGeneratorConnection(activeGenerators[i], activeGenerators[i].connections[j]);
+				}
+				j--;
+			}
+		}
+		
+		// Check for new connections.
 		for (i in 0 ... activeGenerators.length)
 		{
 			for (j in i + 1 ... activeGenerators.length)
@@ -158,6 +173,23 @@ class PlayState extends FlxState
 				}
 			}
 		}
+		
+		// Check for new power distribution.
+		for (i in 0 ... activeGenerators.length)
+		{
+			activeGenerators[i].checked = false;
+		}
+		for (i in 0 ... activeGenerators.length)
+		{
+			activeGenerators[i].redistributePower();
+		}
+		
+		//var newPower:Float = (Generator1.power + Generator2.power) * 0.5;
+		//Generator1.setPower(newPower);
+		//Generator2.setPower(newPower);
+		
+		//checkPowerAreas(Generator1);
+		//checkPowerAreas(Generator2); 
 	}
 	
 	private function buildConnections(X:Int, Y:Int, Connections:Array<Array<Int>>, Index:Int):Bool
@@ -186,17 +218,16 @@ class PlayState extends FlxState
 		return true;
 	}
 	
+	private function removeGeneratorConnection(Generator1:Generator, Generator2:Generator):Void
+	{
+		Generator1.connections.remove(Generator2);
+		Generator2.connections.remove(Generator1);
+	}
+	
 	private function addGeneratorConnection(Generator1:Generator, Generator2:Generator):Void
 	{
 		Generator1.connections.push(Generator2);
 		Generator2.connections.push(Generator1);
-		
-		var newPower:Float = (Generator1.power + Generator2.power) * 0.5;
-		Generator1.setPower(newPower);
-		Generator2.setPower(newPower);
-		
-		checkPowerAreas(Generator1);
-		checkPowerAreas(Generator2);
 	}
 	
 	private function checkPowerAreas(RepoweredGenerator:Generator):Void
@@ -218,7 +249,12 @@ class PlayState extends FlxState
 			}
 			else
 			{
-				trace("Cannot create wire at " + FlxG.mouse.x + ", " + FlxG.mouse.y);
+				var obj:FlxObject = Util.firstSimpleGroupOverlap(G.o, Wire.group);
+				if (obj != null)
+				{
+					obj.kill();
+					checkWireConnections();
+				}
 			}
 		}
 	}

@@ -55,6 +55,8 @@ class Generator extends TileObject
 	public var startingPower:Float;
 	public var totalPower:Float;
 	
+	public var checked:Bool = false;
+	
 	public var connections:Array<Generator>;
 	
 	public var ui:GeneratorUI;
@@ -91,6 +93,30 @@ class Generator extends TileObject
 		return connections.indexOf(ConnectedGenerator) != -1;
 	}
 	
+	public function redistributePower():Void
+	{
+		if (checked) return;
+		
+		checked = true;
+		
+		var newPower:Float = startingPower;
+		
+		for (i in 0 ... connections.length)
+		{
+			newPower += connections[i].startingPower;
+		}
+		
+		newPower /= (connections.length + 1);
+		
+		setPower(newPower);
+		
+		for (i in 0 ... connections.length)
+		{
+			connections[i].checked = true;
+			connections[i].setPower(newPower);
+		}
+	}
+	
 	public function setPower(NewPower:Float):Void
 	{
 		power = NewPower;
@@ -104,6 +130,6 @@ class Generator extends TileObject
 			totalPower = NewPower;
 			ui.updatePower(power, totalPower);
 		}
-	}
+	}	
 	
 }

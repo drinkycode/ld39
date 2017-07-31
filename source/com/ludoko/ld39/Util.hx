@@ -13,7 +13,12 @@ class Util
 
 	public static function simpleGroupOverlap(Object:FlxObject, Group:FlxGroup):Bool
 	{
-		if (!Object.alive) return false;
+		return (firstSimpleGroupOverlap(Object, Group) != null);
+	}
+	
+	public static function firstSimpleGroupOverlap(Object:FlxObject, Group:FlxGroup):FlxObject
+	{
+		if (!Object.alive) return null;
 		
 		for (i in 0 ... Group.members.length)
 		{
@@ -23,11 +28,16 @@ class Util
 			
 			if (!((Object.x > o.x + o.width) || (Object.x + Object.width < o.x) || (Object.y > o.y + o.height) || (Object.y + Object.health < o.y)))
 			{
-				return true;
+				return o;
 			}
 		}
 		
-		return false;
+		return null;
+	}
+	
+	public static function shortenFloat(F:Float):Float
+	{
+		return Math.round(F * 100) / 100;
 	}
 	
 }

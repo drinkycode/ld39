@@ -107,10 +107,10 @@ class GeneratorUI extends FlxSpriteGroup
 	
 	public function updatePower(Power:Float, TotalPower:Float = -1):Void
 	{
-		currentPower.text = Power + "";
+		currentPower.text = Util.shortenFloat(Power) + "";
 		if (TotalPower != -1)
 		{
-			totalPower.text = TotalPower + "";
+			totalPower.text = Util.shortenFloat(TotalPower) + "";
 		}
 	}
 	

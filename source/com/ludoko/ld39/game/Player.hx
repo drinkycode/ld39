@@ -23,6 +23,8 @@ class Player extends TileObject
 	
 	public static inline var WIRE_CREATE_OFFSET:Int = 20;
 	
+	public static inline var INITIAL_HEALTH:Int = 3;
+	
 	
 	public var moving:Bool = false;
 	
@@ -47,6 +49,8 @@ class Player extends TileObject
 		offset.y = frameHeight - height - 8;
 		
 		maxVelocity.x = maxVelocity.y = PLAYER_MAX_SPEED;
+		
+		health = INITIAL_HEALTH;
 		
 		// Set player position here
 		setCenteredPosition(X, Y);
