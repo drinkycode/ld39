@@ -11,14 +11,14 @@
   <object id="3" name="generator" gid="21" x="480" y="144" width="48" height="48">
    <properties>
     <property name="level0" value="50"/>
-    <property name="level1" value="25"/>
+    <property name="level1" value="33"/>
     <property name="level10" value="25"/>
     <property name="level11" value="6"/>
     <property name="level12" value="16"/>
     <property name="level13" value="11"/>
     <property name="level14" value="12"/>
     <property name="level15" value="25"/>
-    <property name="level2" value="33"/>
+    <property name="level2" value="25"/>
     <property name="level3" value="16"/>
     <property name="level4" value="25"/>
     <property name="level5" value="25"/>
@@ -31,14 +31,14 @@
   <object id="10" name="start_generator" gid="21" x="144" y="192" width="48" height="48">
    <properties>
     <property name="level0" value="50"/>
-    <property name="level1" value="50"/>
+    <property name="level1" value="33"/>
     <property name="level10" value="25"/>
     <property name="level11" value="50"/>
     <property name="level12" value="33"/>
     <property name="level13" value="33"/>
     <property name="level14" value="25"/>
     <property name="level15" value="50"/>
-    <property name="level2" value="33 "/>
+    <property name="level2" value="50"/>
     <property name="level3" value="50"/>
     <property name="level4" value="50"/>
     <property name="level5" value="25"/>
@@ -51,14 +51,14 @@
   <object id="11" name="generator" gid="21" x="528" y="336" width="48" height="48">
    <properties>
     <property name="level0" value="0"/>
-    <property name="level1" value="25"/>
+    <property name="level1" value="33"/>
     <property name="level10" value="25"/>
     <property name="level11" value="6"/>
     <property name="level12" value="16"/>
     <property name="level13" value="11"/>
     <property name="level14" value="6"/>
     <property name="level15" value="6"/>
-    <property name="level2" value="33"/>
+    <property name="level2" value="25"/>
     <property name="level3" value="16"/>
     <property name="level4" value="12"/>
     <property name="level5" value="25"/>
