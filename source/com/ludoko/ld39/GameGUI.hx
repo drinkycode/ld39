@@ -13,6 +13,7 @@ class GameGUI extends FlxGroup
 {
 
 	public static inline var FONT_04B03B:String = "assets/fonts/04B_03B.TTF";
+	public static inline var FONT_DEFINITELY:String = "assets/fonts/definitely_possible.ttf";
 	
 	public var power:FlxText;
 	
@@ -21,13 +22,13 @@ class GameGUI extends FlxGroup
 		super();
 		
 		power = new FlxText(10, 10, FlxG.width, "Power: 0");
-		power.setFormat(FONT_04B03B, 32, 0x000000);
+		power.setFormat(FONT_DEFINITELY, 32, 0x000000);
 		add(power);
 	}
 	
 	public function updatePower(Power:Float):Void
 	{
-		power.text = "Power: " + Power;
+		power.text = "Total Power: " + Power;
 	}
 	
 }

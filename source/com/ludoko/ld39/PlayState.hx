@@ -5,6 +5,7 @@ import com.ludoko.ld39.game.Generator;
 import com.ludoko.ld39.game.Player;
 import com.ludoko.ld39.game.Sparkie;
 import com.ludoko.ld39.game.Wire;
+import com.ludoko.ld39.ui.Background;
 import com.ludoko.ld39.ui.GeneratorUI;
 import com.ludoko.ld39.ui.Grid;
 
@@ -32,6 +33,7 @@ class PlayState extends FlxState
 	public var currentLevel:GameLevel;
 	public var levelData:TiledLevel;
 	
+	public var background:Background;
 	public var player:Player;
 	public var gui:GameGUI;
 	
@@ -75,6 +77,7 @@ class PlayState extends FlxState
 		
 		loadLevel();
 		
+		background = new Background();
 		player = new Player(G.halfWidth, G.halfHeight);
 		gui = new GameGUI();
 		
@@ -96,6 +99,7 @@ class PlayState extends FlxState
 		addSparkie(1, 5);
 		
 		// Setup adds in proper layering order.
+		add(background);
 		add(currentLevel);
 		add(gui);
 	}
