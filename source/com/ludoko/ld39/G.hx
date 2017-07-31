@@ -36,8 +36,8 @@ class G
 	}
 	
 	
-	public static var levels:Array<Dynamic> = [];
 	public static var level:Int = 0;
+	public static inline var MAX_LEVEL:Int = 15;
 	
 	public static var scores:Array<Dynamic> = [];
 	public static var score:Int = 0;

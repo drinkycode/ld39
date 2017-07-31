@@ -8,6 +8,7 @@ import com.ludoko.ld39.game.Wire;
 import com.ludoko.ld39.ui.Background;
 import com.ludoko.ld39.ui.GeneratorUI;
 import com.ludoko.ld39.ui.Grid;
+import flixel.input.keyboard.FlxKey;
 
 import flixel.FlxBasic;
 import flixel.FlxG;
@@ -44,9 +45,8 @@ class PlayState extends FlxState
 	public var testConnections:Array<Array<Int>>;
 	
 	public var maxLevels:Int = 16;
-	public var level:Int = 0;
 	
-	public var levelTimer:Float = 0;
+	public var _refreshLevel:Float = 0;
 	
 	override public function create():Void
 	{
@@ -67,6 +67,8 @@ class PlayState extends FlxState
 	
 	public function gameSetup():Void
 	{
+		G.level = 0;
+		
 		activeGenerators = new Array<Generator>();
 		
 		// Preloads for pooling.
@@ -268,28 +270,9 @@ class PlayState extends FlxState
 			}
 		}
 		
-		// Start level check to see if player has correct power levels.
-		var levelComplete:Bool = true;
-		for (i in 0 ... activeGenerators.length)
-		{
-			if (activeGenerators[i].neededPower != null)
-			{
-				if (activeGenerators[i].power < activeGenerators[i].neededPower[level])
-				{
-					levelComplete = false;
-					break;
-				}
-			}
-		}
-		
-		if (levelComplete)
-		{
-			level++;
-			levelTimer = 3;
-			//Set level to refresh
-		}
-		
 		checkPowerAreas();
+		
+		checkLevelComplete();
 	}
 	
 	private function buildConnections(X:Int, Y:Int, Connections:Array<Array<Int>>, Index:Int):Bool
@@ -369,6 +352,51 @@ class PlayState extends FlxState
 		currentLevel.checkPowerAreas(activeGenerators);
 	}
 	
+	private function checkLevelComplete():Void
+	{
+		// Start level check to see if player has correct power levels.
+		var levelComplete:Bool = true;
+		for (i in 0 ... activeGenerators.length)
+		{
+			if (activeGenerators[i].neededPower != null)
+			{
+				if (activeGenerators[i].power < activeGenerators[i].neededPower[G.level])
+				{
+					levelComplete = false;
+					break;
+				}
+			}
+		}
+		
+		if (levelComplete)
+		{
+			trace("Level " + G.level + " completed!");
+			
+			G.level++;
+			
+			if (G.level > G.MAX_LEVEL)
+			{
+				G.level = G.MAX_LEVEL;
+			}
+			else
+			{
+				// Set level to refresh.
+				_refreshLevel = 3;
+			}
+		}
+	}
+	
+	private function updateGeneratorUIs():Void
+	{
+		for (i in 0 ... activeGenerators.length)
+		{
+			if (activeGenerators[i].neededPower != null)
+			{
+				activeGenerators[i].checkGeneratorPower();
+			}
+		}
+	}
+	
 	override public function update():Void
 	{
 		super.update();
@@ -378,6 +406,28 @@ class PlayState extends FlxState
 		{
 			playerOverlapsSparkie(sparkie);
 		}
+		
+		if (FlxG.keys.anyJustPressed(["LBRACKET"]))
+		{
+			G.level--;
+			if (G.level < 0)
+			{
+				G.level = 0;
+			}
+			trace("On level " + G.level);
+			updateGeneratorUIs();
+		}
+		else if (FlxG.keys.anyJustPressed(["RBRACKET"]))
+		{
+			G.level++;
+			if (G.level > G.MAX_LEVEL)
+			{
+				G.level = G.MAX_LEVEL;
+			}
+			trace("On level " + G.level);
+			updateGeneratorUIs();
+		}
+		
 		
 		if (FlxG.mouse.justPressed)
 		{
@@ -398,19 +448,13 @@ class PlayState extends FlxState
 			}
 		}
 		
-		if (levelTimer > 0)
+		if (_refreshLevel > 0)
 		{
-			levelTimer -= FlxG.elapsed;
+			_refreshLevel -= FlxG.elapsed;
 			
-			if (levelTimer <= 0)
+			if (_refreshLevel <= 0)
 			{
-				for (i in 0 ... activeGenerators.length)
-				{
-					if (activeGenerators[i].neededPower != null)
-					{
-						activeGenerators[i].checkGeneratorPower();
-					}
-				}
+				updateGeneratorUIs();
 			}
 		}
 	}

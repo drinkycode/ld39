@@ -203,7 +203,7 @@ class Generator extends TileObject
 		}
 		else
 		{
-			ui.updatePower(power, neededPower[PlayState.instance.level]);
+			ui.updatePower(power, neededPower[G.level]);
 		}
 	}	
 	
