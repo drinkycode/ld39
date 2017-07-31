@@ -181,7 +181,7 @@ class PlayState extends FlxState
 				
 				if (isSurrounded)
 				{
-					sparkie.kill();
+					sparkie.die();
 					addGenerator(sparkieTileX, sparkieTileY, 25);
 					connections[sparkieTileY][sparkieTileX] = 1;
 				}
@@ -291,9 +291,10 @@ class PlayState extends FlxState
 	{
 		super.update();
 		
-		if (Util.simpleGroupOverlap(player, Sparkie.group))
+		var sparkie:Sparkie = cast(Util.firstSimpleGroupOverlap(player, Sparkie.group), Sparkie);
+		if (sparkie != null)
 		{
-			playerOverlapsSparkie();
+			playerOverlapsSparkie(sparkie);
 		}
 		
 		if (FlxG.mouse.justPressed)
@@ -316,8 +317,9 @@ class PlayState extends FlxState
 		}
 	}
 	
-	private function playerOverlapsSparkie():Void
+	private function playerOverlapsSparkie(sparkie:Sparkie):Void
 	{
+		sparkie.animation.play("bump");
 		player.hurt(1);
 	}
 	

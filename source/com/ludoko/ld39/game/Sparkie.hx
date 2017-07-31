@@ -63,13 +63,26 @@ class Sparkie extends TileObject
 	{
 		super();
 		
-		loadGraphic("assets/images/sparkie.png");
+		loadGraphic("assets/images/sparkie.png", true, 48, 48);
+		animation.add("idle", [0, 2, 1, 2], 20);
+		animation.add("bump", [3, 0, 2, 1], 10, false);
+		animation.add("die", [4, 5, 6, 7, 8, 9], 20, false);
+		animation.play("idle");
 		
 		// Set up hitbox
 		width = ENEMY_WIDTH;
 		height = ENEMY_HEIGHT;
 		offset.x = Math.floor((frameWidth - width) * 0.5);
 		offset.y = Math.floor((frameHeight - height) * 0.5);
+		
+		health = 1;
+	}
+	
+	public function die():Void
+	{
+		animation.play("die");
+		state = 0;
+		alive = false;
 	}
 	
 	override public function kill():Void 
@@ -161,12 +174,27 @@ class Sparkie extends TileObject
 				}
 			}
 		}
+		
+		if (animation.name == "bump" && animation.finished)
+		{
+			animation.play("idle");
+		}
+		
+		if (health == 1 && animation.name == "die" && animation.finished && !alive)
+		{
+			health = 0;
+			kill();
+		}
 	}
 	
 	private function sparkieHitsWire(S:FlxBasic, W:FlxBasic):Void
 	{
-		var wire:Wire = cast W;
-		wire.hurt(1);
+		if (alive)
+		{
+			animation.play("bump");
+			var wire:Wire = cast W;
+			wire.hurt(1);
+		}
 	}
 	
 }
