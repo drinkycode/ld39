@@ -402,6 +402,8 @@ class PlayState extends FlxState
 				// Set level to refresh.
 				_refreshLevel = 3;
 			}
+			
+			gui.updateLevel(G.level);
 		}
 	}
 	
@@ -433,7 +435,10 @@ class PlayState extends FlxState
 			{
 				G.level = 0;
 			}
+			
 			trace("On level " + G.level);
+			gui.updateLevel(G.level);
+			
 			updateGeneratorUIs();
 		}
 		else if (FlxG.keys.anyJustPressed(["RBRACKET"]))
@@ -443,7 +448,10 @@ class PlayState extends FlxState
 			{
 				G.level = G.MAX_LEVEL;
 			}
+			
 			trace("On level " + G.level);
+			gui.updateLevel(G.level);
+			
 			updateGeneratorUIs();
 		}
 		

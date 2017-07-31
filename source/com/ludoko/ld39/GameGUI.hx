@@ -16,20 +16,20 @@ class GameGUI extends FlxGroup
 	public static inline var FONT_DEFINITELY:String = "assets/fonts/definitely_possible.ttf";
 	public static inline var FONT_TILLANA:String = "assets/fonts/Tillana-ExtraBold.ttf";
 	
-	public var power:FlxText;
+	public var level:FlxText;
 	
 	public function new() 
 	{
 		super();
 		
-		power = new FlxText(10, 10, FlxG.width, "Power: 0");
-		power.setFormat(FONT_DEFINITELY, 32, 0x000000);
-		add(power);
+		level = new FlxText(8, FlxG.height - 39, FlxG.width, "Level: 1");
+		level.setFormat(FONT_TILLANA, 24, 0x000000);
+		add(level);
 	}
 	
-	public function updatePower(Power:Float):Void
+	public function updateLevel(Level:Int):Void
 	{
-		power.text = "Total Power: " + Power;
+		level.text = "Level: " + Level;
 	}
 	
 }
