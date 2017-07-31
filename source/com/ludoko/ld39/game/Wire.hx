@@ -52,23 +52,36 @@ class Wire extends TileObject
 	public static inline var HITBOX_WIDTH:Int = 48;
 	public static inline var HITBOX_HEIGHT:Int = 48;
 	
+	private var _currentAnimation:String;
 	private var _hurtTimer:Float = 0;
 	
 	public function new() 
 	{
 		super();
 		loadGraphic("assets/images/wire.png", true, 48, 48);
-		animation.add("horizontal", [0], 0, false);
-		animation.add("vertical", [1], 0, false);
-		animation.add("corner_nw", [2], 0, false);
-		animation.add("corner_ne", [3], 0, false);
-		animation.add("corner_se", [4], 0, false);
-		animation.add("corner_sw", [5], 0, false);
-		animation.add("three_nwe", [6], 0, false);
-		animation.add("three_nse", [7], 0, false);
-		animation.add("three_sew", [8], 0, false);
-		animation.add("three_nsw", [9], 0, false);
-		animation.add("all", [10], 0, false);
+		animation.add("horizontal", 	[0], 0, false);
+		animation.add("vertical", 		[1], 0, false);
+		animation.add("corner_nw", 		[2], 0, false);
+		animation.add("corner_ne", 		[3], 0, false);
+		animation.add("corner_se", 		[4], 0, false);
+		animation.add("corner_sw", 		[5], 0, false);
+		animation.add("three_nwe", 		[6], 0, false);
+		animation.add("three_nse", 		[7], 0, false);
+		animation.add("three_sew", 		[8], 0, false);
+		animation.add("three_nsw", 		[9], 0, false);
+		animation.add("all", 			[10], 0, false);
+		
+		animation.add("horizontal_l", 	[11], 0, false);
+		animation.add("vertical_l", 	[12], 0, false);
+		animation.add("corner_nw_l", 	[13], 0, false);
+		animation.add("corner_ne_l", 	[14], 0, false);
+		animation.add("corner_se_l", 	[15], 0, false);
+		animation.add("corner_sw_l", 	[16], 0, false);
+		animation.add("three_nwe_l", 	[17], 0, false);
+		animation.add("three_nse_l", 	[18], 0, false);
+		animation.add("three_sew_l", 	[19], 0, false);
+		animation.add("three_nsw_l", 	[20], 0, false);
+		animation.add("all_l", 			[21], 0, false);
 		
 		immovable = true;
 		
@@ -108,87 +121,114 @@ class Wire extends TileObject
 		var connectedS:Bool = false;
 		var connectedW:Bool = false;
 		
-		if ((tileY > 0) && (WireConnections[tileY - 1][tileX] == 1))
+		if ((tileY > 0) && (WireConnections[tileY - 1][tileX] != 0))
 		{
 			connectedN = true;
 			connections++;
 		}
-		if ((tileX < GameLevel.levelWidth - 1) && (WireConnections[tileY][tileX + 1] == 1))
+		if ((tileX < GameLevel.levelWidth - 1) && (WireConnections[tileY][tileX + 1] != 0))
 		{
 			connectedE = true;
 			connections++;
 		}
-		if ((tileY < GameLevel.levelHeight - 1) && (WireConnections[tileY + 1][tileX] == 1))
+		if ((tileY < GameLevel.levelHeight - 1) && (WireConnections[tileY + 1][tileX] != 0))
 		{
 			connectedS = true;
 			connections++;
 		}
-		if ((tileX > 0) && (WireConnections[tileY][tileX - 1] == 1))
+		if ((tileX > 0) && (WireConnections[tileY][tileX - 1] != 0))
 		{
 			connectedW = true;
 			connections++;
 		}
 		
+		var lit:Bool = false;
+		
+		for (i in 0 ... Generator.group.members.length)
+		{
+			if (!Generator.group.members[i].alive) continue;
+			
+			var generator:Generator = cast Generator.group.members[i];
+			if (WireConnections[tileY][tileX] == WireConnections[generator.tileY][generator.tileX])
+			{
+				lit = true;
+				break;
+			}
+		}
+		
 		if (connections == 4)
 		{
-			animation.play("all");
+			playAnimation("all", lit);
 		}
 		else if (connections == 3)
 		{
 			if (connectedN && connectedS && connectedW)
 			{
-				animation.play("three_nsw");
+				playAnimation("three_nsw", lit);
 			}
 			else if (connectedN && connectedS && connectedE)
 			{
-				animation.play("three_nse");
+				playAnimation("three_nse", lit);
 			}
 			else if (connectedS && connectedE && connectedW)
 			{
-				animation.play("three_sew");
+				playAnimation("three_sew", lit);
 			}
 			else 
 			{
-				animation.play("three_nwe");
+				playAnimation("three_nwe", lit);
 			}
 		}
 		else if (connections == 2)
 		{
 			if (connectedN && connectedW)
 			{
-				animation.play("corner_nw");
+				playAnimation("corner_nw", lit);
 			}
 			else if (connectedN && connectedE)
 			{
-				animation.play("corner_ne");
+				playAnimation("corner_ne", lit);
 			}
 			else if (connectedS && connectedE)
 			{
-				animation.play("corner_se");
+				playAnimation("corner_se", lit);
 			}
 			else if (connectedS && connectedW)
 			{
-				animation.play("corner_sw");
+				playAnimation("corner_sw", lit);
 			}
 			else if (connectedN && connectedS)
 			{
-				animation.play("vertical");
+				playAnimation("vertical", lit);
 			}
 			else
 			{
-				animation.play("horizontal");
+				playAnimation("horizontal", lit);
 			}
 		}
 		else
 		{
 			if (connectedN || connectedS)
 			{
-				animation.play("vertical");
+				playAnimation("vertical", lit);
 			}
 			else
 			{
-				animation.play("horizontal");
+				playAnimation("horizontal", lit);
 			}
+		}
+	}
+	
+	private function playAnimation(Animation:String, Lit:Bool = false):Void
+	{
+		_currentAnimation = Animation;
+		if (!Lit)
+		{
+			animation.play(Animation);
+		}
+		else
+		{
+			animation.play(Animation + "_l");
 		}
 	}
 	

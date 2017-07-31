@@ -210,13 +210,6 @@ class PlayState extends FlxState
 			}
 		}
 		
-		for (i in 0 ... Wire.group.members.length)
-		{
-			var wire:Wire = cast Wire.group.members[i];
-			if (!wire.alive) continue;
-			wire.updateWireConnection(connections);
-		}
-		
 		var connectionIndex:Int = 2;
 		for (j in 0 ... GameLevel.levelHeight)
 		{
@@ -228,6 +221,13 @@ class PlayState extends FlxState
 					connectionIndex++;
 				}
 			}
+		}
+		
+		for (i in 0 ... Wire.group.members.length)
+		{
+			var wire:Wire = cast Wire.group.members[i];
+			if (!wire.alive) continue;
+			wire.updateWireConnection(connections);
 		}
 		
 		// Clean up old connections
