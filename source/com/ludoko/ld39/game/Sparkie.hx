@@ -1,5 +1,6 @@
 package com.ludoko.ld39.game;
 
+import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -50,7 +51,7 @@ class Sparkie extends TileObject
 	
 	
 	
-	public static inline var ENEMY_SPEED:Float = 60;
+	public static inline var ENEMY_SPEED:Float = 45;
 	
 	public static inline var ENEMY_WIDTH:Int = 32;
 	public static inline var ENEMY_HEIGHT:Int = 32;
@@ -146,6 +147,8 @@ class Sparkie extends TileObject
 		FlxG.collide(this, Wall.group);
 		FlxG.collide(this, Generator.group);
 		
+		FlxG.collide(this, Wire.group, sparkieHitsWire);
+		
 		if ((y != previousY))
 		{
 			var newTileY:Int = GameLevel.tileAtY(y + ENEMY_HEIGHT * 0.5);
@@ -158,6 +161,12 @@ class Sparkie extends TileObject
 				}
 			}
 		}
+	}
+	
+	private function sparkieHitsWire(S:FlxBasic, W:FlxBasic):Void
+	{
+		var wire:Wire = cast W;
+		wire.hurt(1);
 	}
 	
 }

@@ -60,9 +60,7 @@ class GameLevel extends FlxGroup
 	public var levelHeight:Int;
 	
 	public var layers:Array<Layer>;
-	
 	public var powerAreas:Array<PowerArea>;
-	
 	public var grid:Grid;
 	
 	public function new(LevelWidth:Int, LevelHeight:Int) 

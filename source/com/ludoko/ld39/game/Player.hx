@@ -2,6 +2,7 @@ package com.ludoko.ld39.game;
 
 import com.ludoko.ld39.game.Wall;
 import com.ludoko.ld39.game.Wire;
+import flixel.util.FlxSpriteUtil;
 
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -27,6 +28,8 @@ class Player extends TileObject
 	
 	
 	public var moving:Bool = false;
+	
+	private var _hurtTimer:Float = 0;
 	
 	public function new(X:Float, Y:Float) 
 	{
@@ -54,6 +57,11 @@ class Player extends TileObject
 		
 		// Set player position here
 		setCenteredPosition(X, Y);
+	}
+	
+	override public function kill():Void 
+	{
+		super.kill();
 	}
 	
 	public function setCenteredPosition(X:Float, Y:Float):Void
@@ -160,6 +168,8 @@ class Player extends TileObject
 				}
 			}
 		}
+		
+		_hurtTimer -= FlxG.elapsed;
 	}
 	
 	private function updateMoving():Void 
@@ -195,6 +205,16 @@ class Player extends TileObject
 		
 		trace("Cannot place wire at " + centerX + createOffsetX + ", " + centerY + createOffsetY);
 		return false;
+	}
+	
+	override public function hurt(Damage:Float):Void 
+	{
+		if (_hurtTimer > 0) return;
+		
+		super.hurt(Damage);
+		_hurtTimer = 1;
+		
+		FlxSpriteUtil.flicker(this, 1);
 	}
 	
 }

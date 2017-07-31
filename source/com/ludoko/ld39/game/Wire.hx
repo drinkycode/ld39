@@ -1,7 +1,9 @@
 package com.ludoko.ld39.game;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.util.FlxSpriteUtil;
 
 /**
  * ...
@@ -50,10 +52,13 @@ class Wire extends TileObject
 	public static inline var HITBOX_WIDTH:Int = 48;
 	public static inline var HITBOX_HEIGHT:Int = 48;
 	
+	private var _hurtTimer:Float = 0;
+	
 	public function new() 
 	{
 		super();
 		loadGraphic("assets/images/wire.png");
+		immovable = true;
 		
 		width = HITBOX_WIDTH;
 		height = HITBOX_HEIGHT;
@@ -78,6 +83,31 @@ class Wire extends TileObject
 		
 		PlayState.instance.checkWireConnections();
 		PlayState.instance.currentLevel.addGameObjectToLayer(this, tileY);
+		
+		_hurtTimer = 0;
+		health = 3;
+	}
+	
+	override public function update():Void 
+	{
+		super.update();
+		_hurtTimer -= FlxG.elapsed;
+	}
+	
+	override public function hurt(Damage:Float):Void 
+	{
+		if (_hurtTimer > 0) return;
+		super.hurt(Damage);
+		_hurtTimer = 3;
+		
+		if (health <= 0)
+		{
+			PlayState.instance.checkWireConnections(false);
+		}
+		else
+		{
+			FlxSpriteUtil.flicker(this, 1);
+		}
 	}
 	
 }

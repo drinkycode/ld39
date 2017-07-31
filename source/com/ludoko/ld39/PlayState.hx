@@ -36,6 +36,8 @@ class PlayState extends FlxState
 	
 	public var activeGenerators:Array<Generator>;
 	
+	public var connections:Array<Array<Int>>;
+	
 	override public function create():Void
 	{
 		instance = this;
@@ -78,6 +80,11 @@ class PlayState extends FlxState
 		
 		addGenerator(8, 2, 0);
 		
+		currentLevel.addPowerArea([[8,  7], [8,  8], [8,  9], 
+								   [9,  7], [9,  8], [9,  9],
+								   [10, 7], [10, 8], [10, 9]],
+								   25);
+		
 		addSparkie(1, 5);
 		
 		// Setup adds in proper layering order.
@@ -89,6 +96,19 @@ class PlayState extends FlxState
 	{
 		var levelWidth:Int = 14;
 		var levelHeight:Int = 10;
+		
+		// Create connections mapping.
+		connections = new Array<Array<Int>>();
+		
+		for (j in 0 ... levelHeight)
+		{
+			var row:Array<Int> = new Array<Int>();
+			for (i in 0 ... levelWidth)
+			{
+				row.push(0);
+			}
+			connections.push(row);
+		}
 		
 		currentLevel = new GameLevel(14, 10);
 	}
@@ -105,18 +125,14 @@ class PlayState extends FlxState
 		Sparkie.create(GameLevel.positionAtTileX(TileX), GameLevel.positionAtTileY(TileY));
 	}
 	
-	public function checkWireConnections():Void
+	public function checkWireConnections(CheckForEnclosement:Bool = true):Void
 	{
-		var connections:Array<Array<Int>> = new Array<Array<Int>>();
-		
 		for (j in 0 ... currentLevel.levelHeight)
 		{
-			var row:Array<Int> = new Array<Int>();
 			for (i in 0 ... currentLevel.levelWidth)
 			{
-				row.push(0);
+				connections[j][i] = 0;
 			}
-			connections.push(row);
 		}
 		
 		for (i in 0 ... activeGenerators.length)
@@ -129,6 +145,47 @@ class PlayState extends FlxState
 			var wire:Wire = cast Wire.group.members[i];
 			if (!wire.alive) continue;
 			connections[wire.tileY][wire.tileX] = 1;
+		}
+		
+		// Check to see if surrounded sparkies are generators.
+		if (CheckForEnclosement)
+		{
+			for (i in 0 ... Sparkie.group.members.length)
+			{
+				if (!Sparkie.group.members[i].alive) continue;
+				
+				var sparkie:Sparkie = cast Sparkie.group.members[i];
+				
+				var sparkieTileX:Int = GameLevel.tileAtX(sparkie.centerX);
+				var sparkieTileY:Int = GameLevel.tileAtY(sparkie.centerY);
+				
+				trace("Sparkie is at " + sparkieTileX + " " + sparkieTileY);
+				
+				var isSurrounded:Bool = true;
+				if ((sparkieTileX > 0) && (connections[sparkieTileY][sparkieTileX - 1] == 0))
+				{
+					isSurrounded = false;
+				}
+				if ((sparkieTileY > 0) && (connections[sparkieTileY - 1][sparkieTileX] == 0))
+				{
+					isSurrounded = false;
+				}
+				if ((sparkieTileX < currentLevel.levelWidth - 1) && (connections[sparkieTileY][sparkieTileX + 1] == 0))
+				{
+					isSurrounded = false;
+				}
+				if ((sparkieTileY < currentLevel.levelHeight - 1) && (connections[sparkieTileY + 1][sparkieTileX] == 0))
+				{
+					isSurrounded = false;
+				}
+				
+				if (isSurrounded)
+				{
+					sparkie.kill();
+					addGenerator(sparkieTileX, sparkieTileY, 25);
+					connections[sparkieTileY][sparkieTileX] = 1;
+				}
+			}
 		}
 		
 		var index:Int = 2;
@@ -234,6 +291,11 @@ class PlayState extends FlxState
 	{
 		super.update();
 		
+		if (Util.simpleGroupOverlap(player, Sparkie.group))
+		{
+			playerOverlapsSparkie();
+		}
+		
 		if (FlxG.mouse.justPressed)
 		{
 			G.setOPosition(FlxG.mouse.x, FlxG.mouse.y);
@@ -248,10 +310,15 @@ class PlayState extends FlxState
 				if (obj != null)
 				{
 					obj.kill();
-					checkWireConnections();
+					checkWireConnections(false);
 				}
 			}
 		}
+	}
+	
+	private function playerOverlapsSparkie():Void
+	{
+		player.hurt(1);
 	}
 	
 }
