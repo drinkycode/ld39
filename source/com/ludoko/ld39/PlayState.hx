@@ -69,7 +69,13 @@ class PlayState extends FlxState
 		gui = new GameGUI();
 		
 		addGenerator(2, 2, 100);
+		
 		addGenerator(5, 2, 0);
+		currentLevel.addPowerArea([[4, 1], [4, 2], [4, 3], 
+								   [5, 1], [5, 2], [5, 3],
+								   [6, 1], [6, 2], [6, 3]],
+								   50);
+		
 		addGenerator(8, 2, 0);
 		
 		addSparkie(1, 5);
@@ -87,10 +93,11 @@ class PlayState extends FlxState
 		currentLevel = new GameLevel(14, 10);
 	}
 	
-	public function addGenerator(TileX:Int, TileY:Int, Power:Float = 100):Void
+	public function addGenerator(TileX:Int, TileY:Int, Power:Float = 100):Generator
 	{
 		var generator:Generator = currentLevel.addGenerator(TileX, TileY, Power);
 		activeGenerators.push(generator);
+		return generator;
 	}
 	
 	public function addSparkie(TileX:Int, TileY:Int):Void
@@ -187,6 +194,14 @@ class PlayState extends FlxState
 		var newPower:Float = (Generator1.power + Generator2.power) * 0.5;
 		Generator1.setPower(newPower);
 		Generator2.setPower(newPower);
+		
+		checkPowerAreas(Generator1);
+		checkPowerAreas(Generator2);
+	}
+	
+	private function checkPowerAreas(RepoweredGenerator:Generator):Void
+	{
+		
 	}
 	
 	override public function update():Void

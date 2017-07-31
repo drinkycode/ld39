@@ -1,6 +1,7 @@
 package com.ludoko.ld39;
 
 import com.ludoko.ld39.game.Generator;
+import com.ludoko.ld39.game.PowerArea;
 import com.ludoko.ld39.game.Wall;
 import com.ludoko.ld39.ui.Grid;
 import flixel.FlxObject;
@@ -60,6 +61,8 @@ class GameLevel extends FlxGroup
 	
 	public var layers:Array<Layer>;
 	
+	public var powerAreas:Array<PowerArea>;
+	
 	public var grid:Grid;
 	
 	public function new(LevelWidth:Int, LevelHeight:Int) 
@@ -89,6 +92,8 @@ class GameLevel extends FlxGroup
 			layers.push(layer);
 			i--;
 		}
+		
+		powerAreas = new Array<PowerArea>();
 	}
 	
 	private function setupWalls():Void
@@ -110,6 +115,7 @@ class GameLevel extends FlxGroup
 		wall = new Wall(tilePixelOffsetX, tilePixelOffsetY + TILE_HEIGHT * levelHeight, TILE_WIDTH * levelWidth, wallSize);
 		Wall.group.add(wall);
 	}
+	
 	
 	public function removeGameObjectFromLayer(Object:FlxObject, Row:Int):Bool
 	{
@@ -147,11 +153,23 @@ class GameLevel extends FlxGroup
 		layers[Row].addUI(Object);
 	}
 	
+	
 	public function addGenerator(TileX:Int, TileY:Int, Power:Float):Generator
 	{
 		var generator:Generator = Generator.create(TileX, TileY, Power);
 		layers[TileY].gameObjects.add(generator);
 		return generator;
+	}
+	
+	public function addPowerArea(IncludedTiles:Array<Dynamic>, Power:Float):Void
+	{
+		var powerArea:PowerArea = new PowerArea(IncludedTiles, Power);
+		powerAreas.push(powerArea);
+	}
+	
+	public function darkenArea(DarkenedTiles:Array<Dynamic>):Void
+	{
+		grid.darkenArea(DarkenedTiles);
 	}
 	
 }

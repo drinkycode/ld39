@@ -71,11 +71,11 @@ class GeneratorUI extends FlxSpriteGroup
 		
 		// 04B_03B
 		currentPower = new FlxText(0, 0, UI_WIDTH, "999");
-		currentPower.setFormat("assets/fonts/04B_03B.TTF", 16, 0xffffff, "center");
+		currentPower.setFormat(GameGUI.FONT_04B03B, 16, 0xffffff, "center");
 		add(currentPower);
 		
 		totalPower = new FlxText(0, 0, UI_WIDTH, "999");
-		totalPower.setFormat("assets/fonts/04B_03B.TTF", 16, 0xffffff, "center");
+		totalPower.setFormat(GameGUI.FONT_04B03B, 16, 0xffffff, "center");
 		add(totalPower);
 		
 		alpha = 0.6;

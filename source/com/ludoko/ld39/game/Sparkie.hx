@@ -131,7 +131,7 @@ class Sparkie extends TileObject
 				var angle:Float = Math.atan2((PlayState.instance.player.centerY - centerY), (PlayState.instance.player.centerX - centerX));
 				velocity.x = Math.cos(angle) * ENEMY_SPEED;
 				velocity.y = Math.sin(angle) * ENEMY_SPEED;
-			}
+			} 
 			
 			timer -= FlxG.elapsed;
 			if (timer <= 0)
