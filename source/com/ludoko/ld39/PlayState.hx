@@ -98,7 +98,7 @@ class PlayState extends FlxState
 		//						   [10, 7], [10, 8], [10, 9]],
 		//						   25);
 		
-		//addSparkie(1, 5);
+		addSparkie(1, 5);
 		
 		// Setup adds in proper layering order.
 		add(background);
@@ -488,7 +488,7 @@ class PlayState extends FlxState
 	
 	private function playerOverlapsSparkie(sparkie:Sparkie):Void
 	{
-		sparkie.animation.play("bump");
+		sparkie.attack();
 		player.hurt(1);
 	}
 	

@@ -2,6 +2,7 @@ package com.ludoko.ld39.game;
 
 import com.ludoko.ld39.game.Wall;
 import com.ludoko.ld39.game.Wire;
+import flixel.system.FlxSound;
 import flixel.util.FlxSpriteUtil;
 
 import flixel.FlxG;
@@ -32,6 +33,8 @@ class Player extends TileObject
 	
 	private var _hurtTimer:Float = 0;
 	
+	private var _soundWalk:FlxSound;
+	
 	public function new(X:Float, Y:Float) 
 	{
 		super();
@@ -42,7 +45,7 @@ class Player extends TileObject
 		animation.add("up", [5], 0, false);
 		animation.add("sidewalk", [11, 10, 12, 10], 8, true);
 		animation.add("downwalk", [1, 0, 2, 0], 8, true);
-		animation.add("upwalk", [6, 6, 5, 7, 7, 5], 8, true);
+		animation.add("upwalk", [6, 5, 7, 5], 8, true);
 		animation.add("sideplace", [13, 13], 4, false);
 		animation.add("downplace", [3, 3], 4, false);
 		animation.add("upplace", [8, 8], 4, false);
@@ -68,6 +71,9 @@ class Player extends TileObject
 		
 		// Set player position here
 		setCenteredPosition(X, Y);
+		_soundWalk = new FlxSound();
+		_soundWalk.loadEmbedded("assets/sounds/walk.mp3", true);
+		_soundWalk.volume = 0.5;
 	}
 	
 	override public function kill():Void 
@@ -75,6 +81,7 @@ class Player extends TileObject
 		//super.kill();
 		alive = false;
 		animation.play("die");
+		_soundWalk.stop();
 	}
 	
 	public function setCenteredPosition(X:Float, Y:Float):Void
@@ -157,6 +164,7 @@ class Player extends TileObject
 							animation.play("side");
 					}
 					placing = false;
+					_soundWalk.stop();
 				}
 			}
 			else
@@ -195,6 +203,7 @@ class Player extends TileObject
 						default:
 							animation.play("sidewalk");
 					}
+					_soundWalk.play();
 					placing = false;
 				}
 				else if (_hurtTimer > 0)
@@ -287,6 +296,7 @@ class Player extends TileObject
 					animation.play("sideplace");
 			}
 			placing = true;
+			FlxG.sound.play("assets/sounds/place.mp3");
 			
 			Wire.create(centerX + createOffsetX, centerY + createOffsetY);
 			return true;
@@ -315,6 +325,11 @@ class Player extends TileObject
 					animation.play("sidehurt");
 			}
 			FlxSpriteUtil.flicker(this, 1);
+			FlxG.sound.play("assets/sounds/player_hurt.mp3");
+		}
+		else
+		{
+			FlxG.sound.play("assets/sounds/player_die.mp3");
 		}
 	}
 	

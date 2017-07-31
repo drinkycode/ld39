@@ -4,6 +4,7 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.system.FlxSound;
 import flixel.util.FlxRandom;
 
 /**
@@ -56,6 +57,8 @@ class Sparkie extends TileObject
 	public static inline var ENEMY_WIDTH:Int = 32;
 	public static inline var ENEMY_HEIGHT:Int = 32;
 	
+	public static var SOUND_ATK:FlxSound = null;
+	
 	public var state:Int = 0;
 	public var timer:Float = 0;
 	
@@ -81,6 +84,7 @@ class Sparkie extends TileObject
 	public function die():Void
 	{
 		animation.play("die");
+		FlxG.sound.play("assets/sounds/spark_die.mp3");
 		state = 0;
 		alive = false;
 	}
@@ -187,11 +191,25 @@ class Sparkie extends TileObject
 		}
 	}
 	
+	public function attack():Void
+	{
+		animation.play("bump");
+		if (SOUND_ATK == null)
+		{
+			SOUND_ATK = FlxG.sound.play("assets/sounds/spark_attack.mp3", 1, false, false);
+		}
+		else if (!SOUND_ATK.playing)
+		{
+			SOUND_ATK.volume = FlxRandom.floatRanged(0.3, 1);
+			SOUND_ATK.play(true);
+		}
+	}
+	
 	private function sparkieHitsWire(S:FlxBasic, W:FlxBasic):Void
 	{
 		if (alive)
 		{
-			animation.play("bump");
+			attack();
 			var wire:Wire = cast W;
 			wire.hurt(1);
 		}
