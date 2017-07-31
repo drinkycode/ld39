@@ -84,19 +84,19 @@ class PlayState extends FlxState
 		//addGenerator(2, 2, 100, null);
 		
 		//addGenerator(5, 2, 0, null);
-		currentLevel.addPowerArea([[4, 1], [4, 2], [4, 3], 
-								   [5, 1], [5, 2], [5, 3],
-								   [6, 1], [6, 2], [6, 3]],
-								   50);
+		//currentLevel.addPowerArea([[4, 1], [4, 2], [4, 3], 
+		//						   [5, 1], [5, 2], [5, 3],
+		//						   [6, 1], [6, 2], [6, 3]],
+		//						   50);
 		
 		//addGenerator(8, 2, 0, null);
 		
-		currentLevel.addPowerArea([[8,  7], [8,  8], [8,  9], 
-								   [9,  7], [9,  8], [9,  9],
-								   [10, 7], [10, 8], [10, 9]],
-								   25);
+		//currentLevel.addPowerArea([[8,  7], [8,  8], [8,  9], 
+		//						   [9,  7], [9,  8], [9,  9],
+		//						   [10, 7], [10, 8], [10, 9]],
+		//						   25);
 		
-		addSparkie(1, 5);
+		//addSparkie(1, 5);
 		
 		// Setup adds in proper layering order.
 		add(background);

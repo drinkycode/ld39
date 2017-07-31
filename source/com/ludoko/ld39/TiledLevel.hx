@@ -35,7 +35,7 @@ class TiledLevel extends TiledMap
 	 * @param	TiledLayerName Assumed layer name is same as image name
 	 * @return
 	 */
-	public function loadTileMap (TiledLayerName:String): FlxTilemap
+	public function loadTileMap(TiledLayerName:String): FlxTilemap
 	{
 		var tiledLayer:TiledLayer = getLayer(TiledLayerName);
 		//if (tiledLayer.type != TiledLayerType.TILE) throw "Tiled Layer " + TiledLayerName + "is not a tile layer"; 
@@ -59,7 +59,7 @@ class TiledLevel extends TiledMap
 	 * @param	TiledLayerName
 	 * @param	state
 	 */
-	public function loadObjects (TiledLayerName:String) 
+	public function loadObjects(TiledLayerName:String) 
 	{
 		var tiledLayer:TiledObjectGroup = getObjectGroup(TiledLayerName);
 		//if (tiledLayer.type != TiledLayerType.OBJECT) throw "Tiled Layer " + TiledLayerName + "is not a object layer"; 
@@ -87,16 +87,28 @@ class TiledLevel extends TiledMap
 					{
 						levels.push(Std.parseFloat(obj.custom.get("level" + i)));
 					}
-					PlayState.instance.addGenerator(Math.floor(x / GameLevel.TILE_WIDTH), Math.floor(y / GameLevel.TILE_HEIGHT), 100, levels, true);
+					PlayState.instance.addGenerator(getTileX(x), getTileY(y), 100, levels, true);
 				case "generator":
 					var levels = new Array<Float>();
 					for (i in 0...PlayState.instance.maxLevels)
 					{
 						levels.push(Std.parseFloat(obj.custom.get("level" + i)));
 					}
-					PlayState.instance.addGenerator(Math.floor(x / GameLevel.TILE_WIDTH), Math.floor(y / GameLevel.TILE_HEIGHT), 0, levels);
+					PlayState.instance.addGenerator(getTileX(x), getTileY(y), 0, levels);
+				case "sparkie":
+					PlayState.instance.addSparkie(getTileX(x), getTileY(y));
 					
 			}
 		}
+	}
+	
+	private function getTileX(X:Float):Int
+	{
+		return Math.floor(X / GameLevel.TILE_WIDTH);
+	}
+	
+	private function getTileY(Y:Float):Int
+	{
+		return Math.floor(Y / GameLevel.TILE_HEIGHT);
 	}
 }
