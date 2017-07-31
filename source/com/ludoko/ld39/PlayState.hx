@@ -38,6 +38,8 @@ class PlayState extends FlxState
 	public var activeGenerators:Array<Generator>;
 	
 	public var connections:Array<Array<Int>>;
+	public var wireConnections:Array<Array<Int>>;
+	public var testConnections:Array<Array<Int>>;
 	
 	public var maxLevels:Int = 16;
 	public var level:Int = 0;
@@ -105,15 +107,25 @@ class PlayState extends FlxState
 		
 		// Create connections mapping.
 		connections = new Array<Array<Int>>();
+		wireConnections = new Array<Array<Int>>();
+		testConnections = new Array<Array<Int>>();
 		
 		for (j in 0 ... levelHeight)
 		{
 			var row:Array<Int> = new Array<Int>();
+			var wireRow:Array<Int> = new Array<Int>();
+			var testRow:Array<Int> = new Array<Int>();
+			
 			for (i in 0 ... levelWidth)
 			{
 				row.push(0);
+				wireRow.push(0);
+				testRow.push(0);
 			}
+			
 			connections.push(row);
+			wireConnections.push(wireRow);
+			testConnections.push(testRow);
 		}
 		
 		currentLevel = new GameLevel(14, 10);
@@ -136,11 +148,13 @@ class PlayState extends FlxState
 	
 	public function checkWireConnections(CheckForEnclosement:Bool = true):Void
 	{
-		for (j in 0 ... currentLevel.levelHeight)
+		for (j in 0 ... GameLevel.levelHeight)
 		{
-			for (i in 0 ... currentLevel.levelWidth)
+			for (i in 0 ... GameLevel.levelWidth)
 			{
 				connections[j][i] = 0;
+				wireConnections[j][i] = 0;
+				testConnections[j][i] = 0;
 			}
 		}
 		
@@ -154,6 +168,7 @@ class PlayState extends FlxState
 			var wire:Wire = cast Wire.group.members[i];
 			if (!wire.alive) continue;
 			connections[wire.tileY][wire.tileX] = 1;
+			wireConnections[wire.tileY][wire.tileX] = 1;
 		}
 		
 		// Check to see if surrounded sparkies are generators.
@@ -168,8 +183,6 @@ class PlayState extends FlxState
 				var sparkieTileX:Int = GameLevel.tileAtX(sparkie.centerX);
 				var sparkieTileY:Int = GameLevel.tileAtY(sparkie.centerY);
 				
-				trace("Sparkie is at " + sparkieTileX + " " + sparkieTileY);
-				
 				var isSurrounded:Bool = true;
 				if ((sparkieTileX > 0) && (connections[sparkieTileY][sparkieTileX - 1] == 0))
 				{
@@ -179,11 +192,11 @@ class PlayState extends FlxState
 				{
 					isSurrounded = false;
 				}
-				if ((sparkieTileX < currentLevel.levelWidth - 1) && (connections[sparkieTileY][sparkieTileX + 1] == 0))
+				if ((sparkieTileX < GameLevel.levelWidth - 1) && (connections[sparkieTileY][sparkieTileX + 1] == 0))
 				{
 					isSurrounded = false;
 				}
-				if ((sparkieTileY < currentLevel.levelHeight - 1) && (connections[sparkieTileY + 1][sparkieTileX] == 0))
+				if ((sparkieTileY < GameLevel.levelHeight - 1) && (connections[sparkieTileY + 1][sparkieTileX] == 0))
 				{
 					isSurrounded = false;
 				}
@@ -197,16 +210,22 @@ class PlayState extends FlxState
 			}
 		}
 		
-		var index:Int = 2;
+		for (i in 0 ... Wire.group.members.length)
+		{
+			var wire:Wire = cast Wire.group.members[i];
+			if (!wire.alive) continue;
+			wire.updateWireConnection(connections);
+		}
 		
-		for (j in 0 ... currentLevel.levelHeight)
+		var connectionIndex:Int = 2;
+		for (j in 0 ... GameLevel.levelHeight)
 		{
 			var row:Array<Int> = new Array<Int>();
-			for (i in 0 ... currentLevel.levelWidth)
+			for (i in 0 ... GameLevel.levelWidth)
 			{
-				if (buildConnections(i, j, connections, index))
+				if (buildConnections(i, j, connections, connectionIndex))
 				{
-					index++;
+					connectionIndex++;
 				}
 			}
 		}
@@ -220,6 +239,7 @@ class PlayState extends FlxState
 				if (connections[activeGenerators[i].tileY][activeGenerators[i].tileX] != connections[activeGenerators[i].connections[j].tileY][activeGenerators[i].connections[j].tileX])
 				{
 					removeGeneratorConnection(activeGenerators[i], activeGenerators[i].connections[j]);
+					trace("Removing connection between " + i + " " + j);
 				}
 				j--;
 			}
@@ -234,23 +254,18 @@ class PlayState extends FlxState
 				
 				if (connections[activeGenerators[i].tileY][activeGenerators[i].tileX] == connections[activeGenerators[j].tileY][activeGenerators[j].tileX])
 				{
-					addGeneratorConnection(activeGenerators[i], activeGenerators[j]);
-					trace("New connection between " + i + " " + j);
+					if (checkForDirectConnection(activeGenerators[i], activeGenerators[j]))
+					{
+						addGeneratorConnection(activeGenerators[i], activeGenerators[j]);
+						trace("New connection between " + i + " " + j);
+						
+						redistributePower(activeGenerators[i], activeGenerators[j]);
+					}
 				}
 			}
 		}
 		
-		// Check for new power distribution.
-		for (i in 0 ... activeGenerators.length)
-		{
-			activeGenerators[i].checked = false;
-		}
-		for (i in 0 ... activeGenerators.length)
-		{
-			activeGenerators[i].redistributePower();
-		}
-		
-		//Start level check to see if player has correct power levels
+		// Start level check to see if player has correct power levels.
 		var levelComplete:Bool = true;
 		for (i in 0 ... activeGenerators.length)
 		{
@@ -263,6 +278,7 @@ class PlayState extends FlxState
 				}
 			}
 		}
+		
 		if (levelComplete)
 		{
 			level++;
@@ -287,16 +303,48 @@ class PlayState extends FlxState
 		{
 			buildConnections(X, Y - 1, Connections, Index);
 		}
-		if (X < currentLevel.levelWidth - 1)
+		if (X < GameLevel.levelWidth - 1)
 		{
 			buildConnections(X + 1, Y, Connections, Index);
 		}
-		if (Y < currentLevel.levelHeight - 1)
+		if (Y < GameLevel.levelHeight - 1)
 		{
 			buildConnections(X, Y + 1, Connections, Index);
 		}
 		
 		return true;
+	}
+	
+	private function checkForDirectConnection(Generator1:Generator, Generator2:Generator):Bool 
+	{
+		// Copy wire connections to test connections.
+		for (j in 0 ... GameLevel.levelHeight)
+		{
+			for (i in 0 ... GameLevel.levelWidth)
+			{
+				testConnections[j][i] = wireConnections[j][i];
+			}
+		}
+		
+		// Mark two generators.
+		testConnections[Generator1.tileY][Generator1.tileX] = 1;
+		testConnections[Generator2.tileY][Generator2.tileX] = 1;
+		
+		// Build connections index.
+		var connectionIndex:Int = 2;
+		for (j in 0 ... GameLevel.levelHeight)
+		{
+			var row:Array<Int> = new Array<Int>();
+			for (i in 0 ... GameLevel.levelWidth)
+			{
+				if (buildConnections(i, j, testConnections, connectionIndex))
+				{
+					connectionIndex++;
+				}
+			}
+		}
+		
+		return (testConnections[Generator1.tileY][Generator1.tileX] == testConnections[Generator2.tileY][Generator2.tileX]);
 	}
 	
 	private function removeGeneratorConnection(Generator1:Generator, Generator2:Generator):Void
@@ -309,6 +357,13 @@ class PlayState extends FlxState
 	{
 		Generator1.connections.push(Generator2);
 		Generator2.connections.push(Generator1);
+	}
+	
+	private function redistributePower(Generator1:Generator, Generator2:Generator):Void
+	{
+		var newPower:Float = (Generator1.power + Generator2.power) * 0.5;
+		Generator1.setPower(newPower);
+		Generator2.setPower(newPower);
 	}
 	
 	private function checkPowerAreas():Void

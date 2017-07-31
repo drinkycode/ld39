@@ -57,7 +57,19 @@ class Wire extends TileObject
 	public function new() 
 	{
 		super();
-		loadGraphic("assets/images/wire.png");
+		loadGraphic("assets/images/wire.png", true, 48, 48);
+		animation.add("horizontal", [0], 0, false);
+		animation.add("vertical", [1], 0, false);
+		animation.add("corner_nw", [2], 0, false);
+		animation.add("corner_ne", [3], 0, false);
+		animation.add("corner_se", [4], 0, false);
+		animation.add("corner_sw", [5], 0, false);
+		animation.add("three_nwe", [6], 0, false);
+		animation.add("three_nse", [7], 0, false);
+		animation.add("three_sew", [8], 0, false);
+		animation.add("three_nsw", [9], 0, false);
+		animation.add("all", [10], 0, false);
+		
 		immovable = true;
 		
 		width = HITBOX_WIDTH;
@@ -76,8 +88,8 @@ class Wire extends TileObject
 	
 	override public function reset(X:Float, Y:Float):Void 
 	{
-		tileX = GameLevel.tileAtX(X);
-		tileY = GameLevel.tileAtY(Y);
+		tileX = GameLevel.clampTileX(GameLevel.tileAtX(X));
+		tileY = GameLevel.clampTileY(GameLevel.tileAtY(Y));
 		
 		super.reset(GameLevel.positionAtTileX(tileX), GameLevel.positionAtTileY(tileY));
 		
@@ -86,6 +98,98 @@ class Wire extends TileObject
 		
 		_hurtTimer = 0;
 		health = 3;
+	}
+	
+	public function updateWireConnection(WireConnections:Array<Array<Int>>):Void
+	{
+		var connections:Int = 0;
+		var connectedN:Bool = false;
+		var connectedE:Bool = false;
+		var connectedS:Bool = false;
+		var connectedW:Bool = false;
+		
+		if ((tileY > 0) && (WireConnections[tileY - 1][tileX] == 1))
+		{
+			connectedN = true;
+			connections++;
+		}
+		if ((tileX < GameLevel.levelWidth - 1) && (WireConnections[tileY][tileX + 1] == 1))
+		{
+			connectedE = true;
+			connections++;
+		}
+		if ((tileY < GameLevel.levelHeight - 1) && (WireConnections[tileY + 1][tileX] == 1))
+		{
+			connectedS = true;
+			connections++;
+		}
+		if ((tileX > 0) && (WireConnections[tileY][tileX - 1] == 1))
+		{
+			connectedW = true;
+			connections++;
+		}
+		
+		if (connections == 4)
+		{
+			animation.play("all");
+		}
+		else if (connections == 3)
+		{
+			if (connectedN && connectedS && connectedW)
+			{
+				animation.play("three_nsw");
+			}
+			else if (connectedN && connectedS && connectedE)
+			{
+				animation.play("three_nse");
+			}
+			else if (connectedS && connectedE && connectedW)
+			{
+				animation.play("three_sew");
+			}
+			else 
+			{
+				animation.play("three_nwe");
+			}
+		}
+		else if (connections == 2)
+		{
+			if (connectedN && connectedW)
+			{
+				animation.play("corner_nw");
+			}
+			else if (connectedN && connectedE)
+			{
+				animation.play("corner_ne");
+			}
+			else if (connectedS && connectedE)
+			{
+				animation.play("corner_se");
+			}
+			else if (connectedS && connectedW)
+			{
+				animation.play("corner_sw");
+			}
+			else if (connectedN && connectedS)
+			{
+				animation.play("vertical");
+			}
+			else
+			{
+				animation.play("horizontal");
+			}
+		}
+		else
+		{
+			if (connectedN || connectedS)
+			{
+				animation.play("vertical");
+			}
+			else
+			{
+				animation.play("horizontal");
+			}
+		}
 	}
 	
 	override public function update():Void 

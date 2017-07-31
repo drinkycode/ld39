@@ -56,8 +56,22 @@ class GameLevel extends FlxGroup
 	
 	public static var wallSize:Int = 32;
 	
-	public var levelWidth:Int;
-	public var levelHeight:Int;
+	public static var levelWidth:Int;
+	public static var levelHeight:Int;
+	
+	public static function clampTileX(TileX:Int):Int
+	{
+		if (TileX < 0) TileX = 0;
+		if (TileX >= levelWidth) TileX = levelWidth - 1;
+		return TileX;
+	}
+	
+	public static function clampTileY(TileY:Int):Int
+	{
+		if (TileY < 0) TileY = 0;
+		if (TileY >= levelHeight) TileY = levelHeight - 1;
+		return TileY;
+	}
 	
 	public var layers:Array<Layer>;
 	public var powerAreas:Array<PowerArea>;

@@ -96,7 +96,7 @@ class Generator extends TileObject
 		return connections.indexOf(ConnectedGenerator) != -1;
 	}
 	
-	public function redistributePower():Void
+	public function evenlyRedistributePower():Void
 	{
 		if (checked) return;
 		
