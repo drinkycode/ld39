@@ -152,9 +152,9 @@ class GameLevel extends FlxGroup
 	}
 	
 	
-	public function addGenerator(TileX:Int, TileY:Int, Power:Float):Generator
+	public function addGenerator(TileX:Int, TileY:Int, Power:Float, NeededPower:Array<Float>):Generator
 	{
-		var generator:Generator = Generator.create(TileX, TileY, Power);
+		var generator:Generator = Generator.create(TileX, TileY, Power, NeededPower);
 		layers[TileY].gameObjects.add(generator);
 		return generator;
 	}

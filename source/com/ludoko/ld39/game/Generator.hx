@@ -36,14 +36,14 @@ class Generator extends TileObject
 		return o;
 	}
 
-	public static function create(TileX:Int, TileY:Int, Power:Float):Generator
+	public static function create(TileX:Int, TileY:Int, Power:Float, NeededPower:Array<Float>):Generator
 	{
 		var o:Generator = cast group.getFirstDead();
 		if (o == null)
 		{
 			o = createInstance();
 		}
-		o.resetGenerator(TileX, TileY, Power);
+		o.resetGenerator(TileX, TileY, Power, NeededPower);
 		return o;
 	}
 	
@@ -54,6 +54,7 @@ class Generator extends TileObject
 	public var power:Float;
 	public var startingPower:Float;
 	public var totalPower:Float;
+	public var neededPower:Array<Float>;
 	
 	public var checked:Bool = false;
 	
@@ -75,13 +76,14 @@ class Generator extends TileObject
 		connections = new Array<Generator>();
 	}
 	
-	public function resetGenerator(TileX:Int, TileY:Int, Power:Float):Void 
+	public function resetGenerator(TileX:Int, TileY:Int, Power:Float, NeededPower:Array<Float>):Void 
 	{
 		tileX = TileX;
 		tileY = TileY;
 		
 		reset(GameLevel.positionAtTileX(TileX), GameLevel.positionAtTileY(TileY));
 		power = startingPower = totalPower = Power;
+		neededPower = NeededPower;
 		
 		connections = [];
 		

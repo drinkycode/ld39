@@ -1,19 +1,15 @@
 package com.ludoko.ld39;
+import com.ludoko.ld39.game.Generator;
 import flixel.addons.editors.tiled.TiledLayer;
 import flixel.addons.editors.tiled.TiledMap;
 import flixel.addons.editors.tiled.TiledObject;
-import flixel.addons.editors.tiled.TiledObjectLayer;
-import flixel.addons.editors.tiled.TiledTileLayer;
+import flixel.addons.editors.tiled.TiledObjectGroup;
+import flixel.addons.editors.tiled.TiledLayer;
 import flixel.addons.editors.tiled.TiledTileSet;
-import flixel.FlxCamera.FlxCameraFollowStyle;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.group.FlxGroup;
-import flixel.tile.FlxBaseTilemap.FlxTilemapAutoTiling;
 import flixel.tile.FlxTilemap;
-import objs.Plant.PlantState;
-import states.MenuState;
-import states.PlayState;
 
 /**
  * ...
@@ -29,8 +25,9 @@ class TiledLevel extends TiledMap
 	{
 		super(TMXPath);
 		//FlxG.log.add(fullWidth + " " + fullHeight);
-		FlxG.worldBounds.set(0, 0, fullWidth, fullHeight);
-		FlxG.camera.setScrollBoundsRect(0, 0, fullWidth, fullHeight);
+		//FlxG.worldBounds.set(0, 0, fullWidth, fullHeight);
+		//FlxG.camera.setBounds(0, 0, fullWidth, fullHeight);
+		//FlxG.camera.setScrollBoundsRect(0, 0, fullWidth, fullHeight);
 	}
 	
 	/**
@@ -40,8 +37,8 @@ class TiledLevel extends TiledMap
 	 */
 	public function loadTileMap (TiledLayerName:String): FlxTilemap
 	{
-		var tiledLayer:TiledTileLayer = cast(getLayer(TiledLayerName), TiledTileLayer);
-		if (tiledLayer.type != TiledLayerType.TILE) throw "Tiled Layer " + TiledLayerName + "is not a tile layer"; 
+		var tiledLayer:TiledLayer = getLayer(TiledLayerName);
+		//if (tiledLayer.type != TiledLayerType.TILE) throw "Tiled Layer " + TiledLayerName + "is not a tile layer"; 
 		var tileSet:TiledTileSet = getTileSet(TiledLayerName);
 		var tilemap:FlxTilemap = new FlxTilemap();
 			
@@ -51,8 +48,9 @@ class TiledLevel extends TiledMap
 			if (i != 0) mapData.push(i - (tileSet.firstGID));
 			else mapData.push(0);
 		}
-		
-		tilemap.loadMapFromArray(mapData, width, height, Assets.getFile(tiledLayer.name), tileSet.tileWidth, tileSet.tileHeight, FlxTilemapAutoTiling.OFF, 0, 0, 1);
+	
+		tilemap.loadMap(mapData, "assets/data/" + TiledLayerName+".png", tileSet.tileWidth, tileSet.tileHeight, 0, 0, 0, 1);
+		//tilemap.loadMapFromArray(mapData, width, height, Assets.getFile(tiledLayer.name), tileSet.tileWidth, tileSet.tileHeight, 0, 0, 1);
 		return tilemap;
 		
 	}
@@ -61,10 +59,10 @@ class TiledLevel extends TiledMap
 	 * @param	TiledLayerName
 	 * @param	state
 	 */
-	public function loadObjects (TiledLayerName:String, state:PlayState) 
+	public function loadObjects (TiledLayerName:String) 
 	{
-		var tiledLayer:TiledObjectLayer = cast(getLayer(TiledLayerName), TiledObjectLayer);
-		if (tiledLayer.type != TiledLayerType.OBJECT) throw "Tiled Layer " + TiledLayerName + "is not a object layer"; 
+		var tiledLayer:TiledObjectGroup = getObjectGroup(TiledLayerName);
+		//if (tiledLayer.type != TiledLayerType.OBJECT) throw "Tiled Layer " + TiledLayerName + "is not a object layer"; 
 		for (obj in tiledLayer.objects) {
 			var x:Float = obj.x;
 			var y:Float = obj.y-obj.height;
@@ -83,6 +81,20 @@ class TiledLevel extends TiledMap
 					//}
 					//state.plants.add(plant);
 					//state.plantsOverlap.add(plant.overlapHitBox);
+				case "start_generator":
+					var levels = new Array<Float>();
+					for (i in 0...PlayState.instance.maxLevels)
+					{
+						levels.push(Std.parseFloat(obj.custom.get("level" + i)));
+					}
+					PlayState.instance.addGenerator(Math.floor(x / GameLevel.TILE_WIDTH), Math.floor(y / GameLevel.TILE_HEIGHT), 100, levels);
+				case "generator":
+					var levels = new Array<Float>();
+					for (i in 0...PlayState.instance.maxLevels)
+					{
+						levels.push(Std.parseFloat(obj.custom.get("level" + i)));
+					}
+					PlayState.instance.addGenerator(Math.floor(x / GameLevel.TILE_WIDTH), Math.floor(y / GameLevel.TILE_HEIGHT), 0, levels);
 					
 			}
 		}

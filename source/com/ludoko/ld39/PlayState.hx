@@ -30,6 +30,7 @@ class PlayState extends FlxState
 	public static var instance:PlayState;
 	
 	public var currentLevel:GameLevel;
+	public var levelData:TiledLevel;
 	
 	public var player:Player;
 	public var gui:GameGUI;
@@ -37,6 +38,8 @@ class PlayState extends FlxState
 	public var activeGenerators:Array<Generator>;
 	
 	public var connections:Array<Array<Int>>;
+	
+	public var maxLevels = 16;
 	
 	override public function create():Void
 	{
@@ -70,15 +73,15 @@ class PlayState extends FlxState
 		player = new Player(G.halfWidth, G.halfHeight);
 		gui = new GameGUI();
 		
-		addGenerator(2, 2, 100);
+		//addGenerator(2, 2, 100, null);
 		
-		addGenerator(5, 2, 0);
+		//addGenerator(5, 2, 0, null);
 		currentLevel.addPowerArea([[4, 1], [4, 2], [4, 3], 
 								   [5, 1], [5, 2], [5, 3],
 								   [6, 1], [6, 2], [6, 3]],
 								   50);
 		
-		addGenerator(8, 2, 0);
+		//addGenerator(8, 2, 0, null);
 		
 		currentLevel.addPowerArea([[8,  7], [8,  8], [8,  9], 
 								   [9,  7], [9,  8], [9,  9],
@@ -111,11 +114,14 @@ class PlayState extends FlxState
 		}
 		
 		currentLevel = new GameLevel(14, 10);
+		
+		levelData = new TiledLevel("assets/data/level.tmx");
+		levelData.loadObjects("entities");
 	}
 	
-	public function addGenerator(TileX:Int, TileY:Int, Power:Float = 100):Generator
+	public function addGenerator(TileX:Int, TileY:Int, Power:Float = 100, NeededPower:Array<Float>):Generator
 	{
-		var generator:Generator = currentLevel.addGenerator(TileX, TileY, Power);
+		var generator:Generator = currentLevel.addGenerator(TileX, TileY, Power, NeededPower);
 		activeGenerators.push(generator);
 		return generator;
 	}
@@ -182,7 +188,7 @@ class PlayState extends FlxState
 				if (isSurrounded)
 				{
 					sparkie.die();
-					addGenerator(sparkieTileX, sparkieTileY, 25);
+					addGenerator(sparkieTileX, sparkieTileY, 25, null);
 					connections[sparkieTileY][sparkieTileX] = 1;
 				}
 			}
