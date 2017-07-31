@@ -87,7 +87,7 @@ class TiledLevel extends TiledMap
 					{
 						levels.push(Std.parseFloat(obj.custom.get("level" + i)));
 					}
-					PlayState.instance.addGenerator(Math.floor(x / GameLevel.TILE_WIDTH), Math.floor(y / GameLevel.TILE_HEIGHT), 100, levels);
+					PlayState.instance.addGenerator(Math.floor(x / GameLevel.TILE_WIDTH), Math.floor(y / GameLevel.TILE_HEIGHT), 100, levels, true);
 				case "generator":
 					var levels = new Array<Float>();
 					for (i in 0...PlayState.instance.maxLevels)

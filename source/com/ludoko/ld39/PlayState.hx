@@ -134,9 +134,9 @@ class PlayState extends FlxState
 		levelData.loadObjects("entities");
 	}
 	
-	public function addGenerator(TileX:Int, TileY:Int, Power:Float = 100, NeededPower:Array<Float>):Generator
+	public function addGenerator(TileX:Int, TileY:Int, Power:Float = 100, NeededPower:Array<Float>, Source:Bool = false):Generator
 	{
-		var generator:Generator = currentLevel.addGenerator(TileX, TileY, Power, NeededPower);
+		var generator:Generator = currentLevel.addGenerator(TileX, TileY, Power, NeededPower, Source);
 		activeGenerators.push(generator);
 		return generator;
 	}
@@ -236,9 +236,10 @@ class PlayState extends FlxState
 			var j:Int = activeGenerators[i].connections.length - 1;
 			while (j >= 0)
 			{
-				if (connections[activeGenerators[i].tileY][activeGenerators[i].tileX] != connections[activeGenerators[i].connections[j].tileY][activeGenerators[i].connections[j].tileX])
+				var otherGenerator:Generator = activeGenerators[i].connections[j].sourceGenerator;
+				if (connections[activeGenerators[i].tileY][activeGenerators[i].tileX] != connections[otherGenerator.tileY][otherGenerator.tileX])
 				{
-					removeGeneratorConnection(activeGenerators[i], activeGenerators[i].connections[j]);
+					removeGeneratorConnection(activeGenerators[i], otherGenerator);
 					trace("Removing connection between " + i + " " + j);
 				}
 				j--;
@@ -258,8 +259,6 @@ class PlayState extends FlxState
 					{
 						addGeneratorConnection(activeGenerators[i], activeGenerators[j]);
 						trace("New connection between " + i + " " + j);
-						
-						redistributePower(activeGenerators[i], activeGenerators[j]);
 					}
 				}
 			}
@@ -349,21 +348,16 @@ class PlayState extends FlxState
 	
 	private function removeGeneratorConnection(Generator1:Generator, Generator2:Generator):Void
 	{
-		Generator1.connections.remove(Generator2);
-		Generator2.connections.remove(Generator1);
+		Generator1.removeConnection(Generator2);
+		Generator2.removeConnection(Generator1);
 	}
 	
 	private function addGeneratorConnection(Generator1:Generator, Generator2:Generator):Void
 	{
-		Generator1.connections.push(Generator2);
-		Generator2.connections.push(Generator1);
-	}
-	
-	private function redistributePower(Generator1:Generator, Generator2:Generator):Void
-	{
 		var newPower:Float = (Generator1.power + Generator2.power) * 0.5;
-		Generator1.setPower(newPower);
-		Generator2.setPower(newPower);
+		
+		Generator1.addConnection(Generator2, newPower - Generator1.power);
+		Generator2.addConnection(Generator1, newPower - Generator2.power);
 	}
 	
 	private function checkPowerAreas():Void
@@ -410,7 +404,7 @@ class PlayState extends FlxState
 				{
 					if (activeGenerators[i].neededPower != null)
 					{
-						activeGenerators[i].setPower(activeGenerators[i].power);
+						activeGenerators[i].checkGeneratorPower();
 					}
 				}
 			}
