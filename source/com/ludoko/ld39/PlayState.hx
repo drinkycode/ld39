@@ -270,6 +270,7 @@ class PlayState extends FlxState
 		}
 		
 		// Check for new connections.
+		var connected:Bool = false;
 		for (i in 0 ... activeGenerators.length)
 		{
 			for (j in i + 1 ... activeGenerators.length)
@@ -282,9 +283,15 @@ class PlayState extends FlxState
 					{
 						addGeneratorConnection(activeGenerators[i], activeGenerators[j]);
 						trace("New connection between " + i + " " + j);
+						connected = true;
 					}
 				}
 			}
+		}
+		
+		if (connected)
+		{
+			FlxG.sound.play("assets/sounds/connected.mp3");
 		}
 		
 		// Figure out generator power distribution here.
