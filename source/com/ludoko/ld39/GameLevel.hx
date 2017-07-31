@@ -172,4 +172,17 @@ class GameLevel extends FlxGroup
 		grid.darkenArea(DarkenedTiles);
 	}
 	
+	public function lightArea(DarkenedTiles:Array<Dynamic>):Void
+	{
+		grid.lightArea(DarkenedTiles);
+	}
+	
+	public function checkPowerAreas(Generators:Array<Generator>):Void
+	{
+		for (i in 0 ... powerAreas.length)
+		{
+			powerAreas[i].checkForPower(Generators);
+		}
+	}
+	
 }

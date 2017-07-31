@@ -73,4 +73,13 @@ class Grid extends FlxGroup
 		}
 	}
 	
+	public function lightArea(DarkenTiles:Array<Dynamic>)
+	{
+		for (i in 0 ... DarkenTiles.length)
+		{
+			var tile:Dynamic = DarkenTiles[i];
+			darkenedTiles[tile[0]][tile[1]].visible = false;
+		}
+	}
+	
 }

@@ -184,12 +184,7 @@ class PlayState extends FlxState
 			activeGenerators[i].redistributePower();
 		}
 		
-		//var newPower:Float = (Generator1.power + Generator2.power) * 0.5;
-		//Generator1.setPower(newPower);
-		//Generator2.setPower(newPower);
-		
-		//checkPowerAreas(Generator1);
-		//checkPowerAreas(Generator2); 
+		checkPowerAreas();
 	}
 	
 	private function buildConnections(X:Int, Y:Int, Connections:Array<Array<Int>>, Index:Int):Bool
@@ -230,9 +225,9 @@ class PlayState extends FlxState
 		Generator2.connections.push(Generator1);
 	}
 	
-	private function checkPowerAreas(RepoweredGenerator:Generator):Void
+	private function checkPowerAreas():Void
 	{
-		
+		currentLevel.checkPowerAreas(activeGenerators);
 	}
 	
 	override public function update():Void
