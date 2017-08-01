@@ -28,6 +28,8 @@ import flixel.util.FlxRandom;
  */
 class PlayState extends FlxState
 {
+	
+	public static inline var ALLOW_DEBUG:Bool = false;
 
 	public static var instance:PlayState;
 	
@@ -553,51 +555,54 @@ class PlayState extends FlxState
 			playerOverlapsSparkie(cast(sparkie, Sparkie));
 		}
 		
-		if (FlxG.keys.anyJustPressed(["LBRACKET"]))
+		if (ALLOW_DEBUG)
 		{
-			G.level--;
-			if (G.level < 0)
+			if (FlxG.keys.anyJustPressed(["LBRACKET"]))
 			{
-				G.level = 0;
-			}
-			
-			trace("On level " + G.level);
-			gui.updateLevel(G.level + 1);
-			
-			updateGeneratorUIs();
-		}
-		else if (FlxG.keys.anyJustPressed(["RBRACKET"]))
-		{
-			G.level++;
-			if (G.level > G.MAX_LEVEL)
-			{
-				G.level = G.MAX_LEVEL;
-			}
-			
-			trace("On level " + G.level);
-			gui.updateLevel(G.level + 1);
-			
-			updateGeneratorUIs();
-		}
-		
-		
-		if (FlxG.mouse.justPressed)
-		{
-			G.setOPosition(FlxG.mouse.x, FlxG.mouse.y);
-		
-			if (!(Util.simpleGroupOverlap(G.o, Wire.group) || Util.simpleGroupOverlap(G.o, Generator.group)))
-			{
-				Wire.create(FlxG.mouse.x, FlxG.mouse.y);
-				SoundUtil.play("place");
-			}
-			else
-			{
-				var obj:FlxObject = Util.firstSimpleGroupOverlap(G.o, Wire.group);
-				if (obj != null)
+				G.level--;
+				if (G.level < 0)
 				{
-					obj.kill();
-					checkWireConnections(false);
-					SoundUtil.play("remove");
+					G.level = 0;
+				}
+				
+				trace("On level " + G.level);
+				gui.updateLevel(G.level + 1);
+				
+				updateGeneratorUIs();
+			}
+			else if (FlxG.keys.anyJustPressed(["RBRACKET"]))
+			{
+				G.level++;
+				if (G.level > G.MAX_LEVEL)
+				{
+					G.level = G.MAX_LEVEL;
+				}
+				
+				trace("On level " + G.level);
+				gui.updateLevel(G.level + 1);
+				
+				updateGeneratorUIs();
+			}
+			
+			
+			if (FlxG.mouse.justPressed)
+			{
+				G.setOPosition(FlxG.mouse.x, FlxG.mouse.y);
+			
+				if (!(Util.simpleGroupOverlap(G.o, Wire.group) || Util.simpleGroupOverlap(G.o, Generator.group)))
+				{
+					Wire.create(FlxG.mouse.x, FlxG.mouse.y);
+					SoundUtil.play("place");
+				}
+				else
+				{
+					var obj:FlxObject = Util.firstSimpleGroupOverlap(G.o, Wire.group);
+					if (obj != null)
+					{
+						obj.kill();
+						checkWireConnections(false);
+						SoundUtil.play("remove");
+					}
 				}
 			}
 		}
