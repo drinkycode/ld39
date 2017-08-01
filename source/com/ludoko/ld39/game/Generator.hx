@@ -3,6 +3,8 @@ package com.ludoko.ld39.game;
 import com.ludoko.ld39.ui.GeneratorUI;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.util.FlxColor;
+import flixel.util.FlxColorUtil;
 
 /**
  * ...
@@ -100,6 +102,10 @@ class Generator extends TileObject
 		reset(GameLevel.positionAtTileX(TileX), GameLevel.positionAtTileY(TileY));
 		startingPower = Power;
 		source = Source;
+		if (startingPower == 100)
+		{
+			loadGraphic("assets/images/start_generator.png");
+		}
 		
 		neededPower = NeededPower;
 		//totalPower = neededPower[0];
@@ -247,6 +253,7 @@ class Generator extends TileObject
 			ui.updatePower(power, totalPower);
 		}*/
 		
+		
 		if (neededPower == null)
 		{
 			ui.updatePower(power);
@@ -254,6 +261,7 @@ class Generator extends TileObject
 		else
 		{
 			ui.updatePower(power, neededPower[G.level]);
+			color = FlxColorUtil.interpolateColor(0x1faec3, FlxColor.WHITE, 100, Math.floor(Math.min(100 * power / neededPower[G.level], 100)));
 		}
 	}	
 	
