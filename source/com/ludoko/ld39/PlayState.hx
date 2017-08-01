@@ -60,6 +60,12 @@ class PlayState extends FlxState
 		FlxG.camera.bgColor = 0xffffffff;
 		
 		gameSetup();
+		if (FlxG.sound.music != null)
+		{
+			FlxG.sound.music.stop();
+		}
+		SoundUtil.loadMusic("sewer_circuit", .35, true);
+		FlxG.sound.music.play();
 	}
 	
 	override public function destroy():Void

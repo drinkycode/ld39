@@ -75,7 +75,7 @@ class Player extends TileObject
 		setCenteredPosition(X, Y);
 		tileSelector = new TileSelector();
 		
-		SoundUtil.load("walk", 0.5, true);
+		SoundUtil.load("walk", 0.25, true);
 	}
 	
 	override public function kill():Void 

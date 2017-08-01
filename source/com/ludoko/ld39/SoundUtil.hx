@@ -33,6 +33,29 @@ class SoundUtil
 		}
 	}
 	
+	public static function loadMusic(Name:String, Volume:Float = 1, Looped:Bool = false):Void
+	{
+		
+		var type:String = ".mp3";
+		
+		#if neko
+			type = ".wav";
+		#end
+		
+		if (sounds == null)
+		{
+			sounds = new Map<String, FlxSound>();
+		}
+		
+		if (sounds.get(Name) == null)
+		{
+			var sound:FlxSound = new FlxSound();
+			sound.loadEmbedded("assets/music/" + Name+type, Looped);
+			sound.volume = Volume;
+			FlxG.sound.music = sound;
+		}
+	}
+	
 	public static function play(Name:String, ForceRestart:Bool = true, ?Volume:Float, ?Looped:Bool):Void
 	{
 		
