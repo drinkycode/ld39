@@ -104,6 +104,8 @@ class PlayState extends FlxState
 		add(background);
 		add(currentLevel);
 		add(gui);
+		
+		currentLevel.gridUI.add(player.tileSelector);
 	}
 	
 	public function loadLevel():Void

@@ -2,6 +2,7 @@ package com.ludoko.ld39.game;
 
 import com.ludoko.ld39.game.Wall;
 import com.ludoko.ld39.game.Wire;
+import com.ludoko.ld39.ui.TileSelector;
 import flixel.system.FlxSound;
 import flixel.util.FlxSpriteUtil;
 
@@ -23,6 +24,7 @@ class Player extends TileObject
 	public static inline var PLAYER_WIDTH:Int = 32;
 	public static inline var PLAYER_HEIGHT:Int = 32;
 	
+	public static inline var WIRE_CREATE_START_Y:Int = 7;
 	public static inline var WIRE_CREATE_OFFSET:Int = 20;
 	
 	public static inline var INITIAL_HEALTH:Int = 3;
@@ -30,6 +32,8 @@ class Player extends TileObject
 	
 	public var moving:Bool = false;
 	public var placing:Bool = false;
+	
+	public var tileSelector:TileSelector;
 	
 	private var _hurtTimer:Float = 0;
 	
@@ -71,6 +75,9 @@ class Player extends TileObject
 		
 		// Set player position here
 		setCenteredPosition(X, Y);
+		
+		tileSelector = new TileSelector();
+		
 		_soundWalk = new FlxSound();
 		_soundWalk.loadEmbedded("assets/sounds/walk.mp3", true);
 		_soundWalk.volume = 0.5;
@@ -231,6 +238,8 @@ class Player extends TileObject
 		FlxG.collide(this, Wall.group);
 		FlxG.collide(this, Generator.group);
 		
+		updateTileSelector();
+		
 		if ((y != previousY))
 		{
 			var newTileY:Int = GameLevel.tileAtY(y + PLAYER_HEIGHT * 0.5);
@@ -265,10 +274,30 @@ class Player extends TileObject
 		}
 	}
 	
+	private function updateTileSelector():Void
+	{
+		var createOffsetX:Float = 0;
+		var createOffsetY:Float = WIRE_CREATE_START_Y;
+		
+		switch (facing) 
+		{
+			case FlxObject.LEFT:
+				createOffsetX = -WIRE_CREATE_OFFSET;
+			case FlxObject.RIGHT:
+				createOffsetX = WIRE_CREATE_OFFSET;
+			case FlxObject.UP:
+				createOffsetY = -WIRE_CREATE_OFFSET;
+			case FlxObject.DOWN:
+				createOffsetY = WIRE_CREATE_OFFSET;
+		}
+		
+		tileSelector.setTilePosition(GameLevel.tileAtX(centerX + createOffsetX), GameLevel.tileAtY(centerY + createOffsetY));
+	}
+	
 	public function addWire():Bool
 	{
 		var createOffsetX:Float = 0;
-		var createOffsetY:Float = 0;
+		var createOffsetY:Float = WIRE_CREATE_START_Y;
 		
 		switch (facing) 
 		{
