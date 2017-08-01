@@ -70,7 +70,7 @@ class SoundUtil
 			sounds = new Map<String, FlxSound>();
 		}
 		
-		if (sounds.get(Name) == null)
+		if (sounds.get(Name) == null || !sounds.get(Name).exists)
 		{
 			if (Volume == null)
 			{
