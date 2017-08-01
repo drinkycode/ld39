@@ -52,11 +52,13 @@ class Sparkie extends TileObject
 	
 	
 	
-	public static inline var ENEMY_SPEED:Float = 45;
+	public static inline var ENEMY_MIN_SPEED:Float = 40;
+	public static inline var ENEMY_MAX_SPEED:Float = 75;
 	
 	public static inline var ENEMY_WIDTH:Int = 32;
 	public static inline var ENEMY_HEIGHT:Int = 32;
 	
+	public var speed:Float = 0;
 	public var state:Int = 0;
 	public var timer:Float = 0;
 	
@@ -123,6 +125,8 @@ class Sparkie extends TileObject
 		super.reset(-9999, -99999);
 		setCenteredPosition(X, Y);
 		
+		speed = FlxRandom.floatRanged(ENEMY_MIN_SPEED, ENEMY_MAX_SPEED);
+		
 		timer = FlxRandom.floatRanged(1, 3);
 	}
 	
@@ -146,8 +150,8 @@ class Sparkie extends TileObject
 			if (((velocity.x == 0) && (velocity.y == 0)) || (FlxRandom.float() < 0.2))
 			{
 				var angle:Float = Math.atan2((PlayState.instance.player.centerY - centerY), (PlayState.instance.player.centerX - centerX));
-				velocity.x = Math.cos(angle) * ENEMY_SPEED;
-				velocity.y = Math.sin(angle) * ENEMY_SPEED;
+				velocity.x = Math.cos(angle) * speed;
+				velocity.y = Math.sin(angle) * speed;
 			} 
 			
 			timer -= FlxG.elapsed;

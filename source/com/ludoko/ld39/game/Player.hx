@@ -347,6 +347,8 @@ class Player extends TileObject
 		super.hurt(Damage);
 		_hurtTimer = 1;
 		
+		PlayState.instance.gui.updateHealth(Math.floor(health));
+		
 		if (alive)
 		{
 			switch(facing)

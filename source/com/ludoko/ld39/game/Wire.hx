@@ -110,7 +110,7 @@ class Wire extends TileObject
 		PlayState.instance.currentLevel.addGameObjectToLayer(this, tileY);
 		
 		_hurtTimer = 0;
-		health = 3;
+		health = 2;
 	}
 	
 	public function updateWireConnection(WireConnections:Array<Array<Int>>):Void
@@ -242,7 +242,7 @@ class Wire extends TileObject
 	{
 		if (_hurtTimer > 0) return;
 		super.hurt(Damage);
-		_hurtTimer = 3;
+		_hurtTimer = 2;
 		
 		if (health <= 0)
 		{

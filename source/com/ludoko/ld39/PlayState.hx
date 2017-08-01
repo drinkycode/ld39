@@ -48,7 +48,9 @@ class PlayState extends FlxState
 	
 	public var maxLevels:Int = 16;
 	
-	public var _refreshLevel:Float = 0;
+	private var _sparkieTimer:Float = 5;
+	
+	private var _refreshLevel:Float = 0;
 	
 	override public function create():Void
 	{
@@ -106,7 +108,6 @@ class PlayState extends FlxState
 		//						   [10, 7], [10, 8], [10, 9]],
 		//						   25);
 		
-		addSparkie(1, 5);
 		
 		// Setup adds in proper layering order.
 		add(background);
@@ -610,6 +611,20 @@ class PlayState extends FlxState
 						SoundUtil.play("remove");
 					}
 				}
+			}
+		}
+		
+		_sparkieTimer -= FlxG.elapsed;
+		if (_sparkieTimer <= 0)
+		{
+			addSparkie(FlxRandom.intRanged(0, GameLevel.levelWidth - 1), FlxRandom.intRanged(0, GameLevel.levelHeight - 1));
+			if (G.level < 3)
+			{
+				_sparkieTimer = FlxRandom.floatRanged(8, 20);
+			}
+			else
+			{
+				_sparkieTimer = FlxRandom.floatRanged(5, 15);
 			}
 		}
 		
