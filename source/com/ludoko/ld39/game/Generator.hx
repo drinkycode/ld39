@@ -66,6 +66,9 @@ class Generator extends TileObject
 	
 	public var startingPower:Float;
 	public var source:Bool = false;
+	public var sourceDepth:Int = -1;
+	
+	public var visited:Bool;
 	
 	public var neededPower:Array<Float>;
 	
@@ -130,9 +133,20 @@ class Generator extends TileObject
 		return false;
 	}
 	
-	public function depthFromSource(Depth:Int = 0, Deep:Int = 0):Int
+	public function depthFromSource():Int
 	{
-		if (Deep >= 5)
+		if (sourceDepth != -1)
+		{
+			return sourceDepth;
+		}
+		
+		sourceDepth = recursiveDepthFromSource();
+		return sourceDepth;
+	}
+	
+	private function recursiveDepthFromSource(Depth:Int = 0):Int
+	{
+		if (Depth >= 5)
 		{
 			return Depth;
 		}
@@ -145,7 +159,7 @@ class Generator extends TileObject
 		var newDepth:Int = 99;
 		for (i in 0 ... connections.length)
 		{
-			var d:Int = connections[i].sourceGenerator.depthFromSource(Depth + 1, Deep + 1);
+			var d:Int = connections[i].sourceGenerator.recursiveDepthFromSource(Depth + 1);
 			if (d < newDepth)
 			{
 				newDepth = d;

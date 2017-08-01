@@ -415,6 +415,11 @@ class PlayState extends FlxState
 		// Zero out all power connections.
 		for (i in 0 ... activeGenerators.length)
 		{
+			activeGenerators[i].visited = false;
+			
+			activeGenerators[i].sourceDepth = -1;
+			activeGenerators[i].depthFromSource();
+			
 			for (j in 0 ... activeGenerators[i].connections.length)
 			{
 				activeGenerators[i].connections[j].power = 0;
@@ -426,34 +431,56 @@ class PlayState extends FlxState
 		for (i in 0 ... rootGenerator.connections.length)
 		{
 			redoGeneratorContracts(rootGenerator, rootGenerator.connections[i].sourceGenerator, splitSourcePower);
+			rootGenerator.connections[i].sourceGenerator.visited = true;
 		}
 		
-		/*for (i in 0 ... rootGenerator.connections.length)
+		recursiveUpdatePowerDistribution(rootGenerator);
+	}
+	
+	private function recursiveUpdatePowerDistribution(SearchGenerator:Generator, Depth:Int = 0):Void
+	{
+		SearchGenerator.visited = true;
+		
+		if (Depth > 6)
 		{
-			var generator:Generator = rootGenerator.connections[i].sourceGenerator;
+			return;
+		}
+		
+		for (i in 0 ... SearchGenerator.connections.length)
+		{
+			var generator:Generator = SearchGenerator.connections[i].sourceGenerator;
 			
 			var newConnections:Int = 0;
 			for (j in 0 ... generator.connections.length)
 			{
 				var depth:Int = generator.connections[j].sourceGenerator.depthFromSource();
-				//trace("Generator connection depth " + depth + " for generator " + activeGenerators.indexOf(generator.connections[j].sourceGenerator));
-				if (depth >= 1)
+				//trace(Depth + " Generator connection depth " + depth + " for generator " + activeGenerators.indexOf(generator.connections[j].sourceGenerator));
+				
+				if (depth > generator.depthFromSource())
 				{
 					newConnections++;
 				}
 			}
 			
 			var splitPower:Float = generator.power / (newConnections + 1);
-			//trace("Has connections " + newConnections + " with power split " + splitPower);
+			trace(Depth + " Has connections " + newConnections + " with power split " + splitPower);
 			
 			for (j in 0 ... generator.connections.length)
 			{
-				if (generator.connections[j].sourceGenerator.depthFromSource() >= 1)
+				if (!generator.connections[j].sourceGenerator.visited && (generator.connections[j].sourceGenerator.depthFromSource() > generator.depthFromSource()))
 				{
 					redoGeneratorContracts(generator, generator.connections[j].sourceGenerator, splitPower);
 				}
 			}
-		}*/
+			
+			for (j in 0 ... generator.connections.length)
+			{
+				if (!generator.connections[j].sourceGenerator.visited && (generator.connections[j].sourceGenerator.depthFromSource() > generator.depthFromSource()))
+				{
+					recursiveUpdatePowerDistribution(generator.connections[j].sourceGenerator, Depth + 1);
+				}
+			}
+		}
 	}
 	
 	private function redoGeneratorContracts(Generator1:Generator, Generator2:Generator, Power:Float):Void
