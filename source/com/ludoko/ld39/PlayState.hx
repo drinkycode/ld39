@@ -227,7 +227,7 @@ class PlayState extends FlxState
 				if (isSurrounded)
 				{
 					sparkie.die();
-					addGenerator(sparkieTileX, sparkieTileY, 25, null, false);
+					addGenerator(sparkieTileX, sparkieTileY, 25, null, true);
 					connections[sparkieTileY][sparkieTileX] = 1;
 				}
 			}
