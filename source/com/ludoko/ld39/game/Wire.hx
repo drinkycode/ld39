@@ -247,11 +247,11 @@ class Wire extends TileObject
 		if (health <= 0)
 		{
 			PlayState.instance.checkWireConnections(false);
-			FlxG.sound.play("assets/sounds/wire_die.mp3");
+			SoundUtil.play("wire_die");
 		}
 		else
 		{
-			FlxG.sound.play("assets/sounds/wire_hurt.mp3");
+			SoundUtil.play("wire_hurt");
 			FlxSpriteUtil.flicker(this, 1);
 		}
 	}

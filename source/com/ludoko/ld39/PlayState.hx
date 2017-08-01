@@ -293,7 +293,7 @@ class PlayState extends FlxState
 		
 		if (connected)
 		{
-			FlxG.sound.play("assets/sounds/connected.mp3");
+			SoundUtil.play("connected");
 		}
 		
 		// Figure out generator power distribution here.
@@ -547,10 +547,10 @@ class PlayState extends FlxState
 	{
 		super.update();
 		
-		var sparkie:Sparkie = cast(Util.firstSimpleGroupOverlap(player, Sparkie.group), Sparkie);
+		var sparkie:FlxObject = Util.firstSimpleGroupOverlap(player, Sparkie.group);
 		if (sparkie != null)
 		{
-			playerOverlapsSparkie(sparkie);
+			playerOverlapsSparkie(cast(sparkie, Sparkie));
 		}
 		
 		if (FlxG.keys.anyJustPressed(["LBRACKET"]))
@@ -588,6 +588,7 @@ class PlayState extends FlxState
 			if (!(Util.simpleGroupOverlap(G.o, Wire.group) || Util.simpleGroupOverlap(G.o, Generator.group)))
 			{
 				Wire.create(FlxG.mouse.x, FlxG.mouse.y);
+				SoundUtil.play("place");
 			}
 			else
 			{
@@ -596,6 +597,7 @@ class PlayState extends FlxState
 				{
 					obj.kill();
 					checkWireConnections(false);
+					SoundUtil.play("remove");
 				}
 			}
 		}
