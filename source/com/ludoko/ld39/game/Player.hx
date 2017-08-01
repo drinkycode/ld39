@@ -33,8 +33,6 @@ class Player extends TileObject
 	
 	private var _hurtTimer:Float = 0;
 	
-	private var _soundWalk:FlxSound;
-	
 	public function new(X:Float, Y:Float) 
 	{
 		super();
@@ -71,9 +69,7 @@ class Player extends TileObject
 		
 		// Set player position here
 		setCenteredPosition(X, Y);
-		_soundWalk = new FlxSound();
-		_soundWalk.loadEmbedded("assets/sounds/walk.mp3", true);
-		_soundWalk.volume = 0.5;
+		SoundUtil.load("walk", 0.5, true);
 	}
 	
 	override public function kill():Void 
@@ -81,7 +77,7 @@ class Player extends TileObject
 		//super.kill();
 		alive = false;
 		animation.play("die");
-		_soundWalk.stop();
+		SoundUtil.stop("walk");
 	}
 	
 	public function setCenteredPosition(X:Float, Y:Float):Void
@@ -164,7 +160,7 @@ class Player extends TileObject
 							animation.play("side");
 					}
 					placing = false;
-					_soundWalk.stop();
+					SoundUtil.stop("walk");
 				}
 			}
 			else
@@ -203,7 +199,7 @@ class Player extends TileObject
 						default:
 							animation.play("sidewalk");
 					}
-					_soundWalk.play();
+					SoundUtil.play("walk", false);
 					placing = false;
 				}
 				else if (_hurtTimer > 0)
@@ -296,10 +292,20 @@ class Player extends TileObject
 					animation.play("sideplace");
 			}
 			placing = true;
-			FlxG.sound.play("assets/sounds/place.mp3");
+			SoundUtil.play("place");
 			
 			Wire.create(centerX + createOffsetX, centerY + createOffsetY);
 			return true;
+		}
+		else
+		{
+			var obj:FlxObject = Util.firstSimpleGroupOverlap(G.o, Wire.group);
+			if (obj != null)
+			{
+				obj.kill();
+				PlayState.instance.checkWireConnections(false);
+				SoundUtil.play("remove");
+			}
 		}
 		
 		trace("Cannot place wire at " + centerX + createOffsetX + ", " + centerY + createOffsetY);
@@ -325,11 +331,11 @@ class Player extends TileObject
 					animation.play("sidehurt");
 			}
 			FlxSpriteUtil.flicker(this, 1);
-			FlxG.sound.play("assets/sounds/player_hurt.mp3");
+			SoundUtil.play("player_hurt");
 		}
 		else
 		{
-			FlxG.sound.play("assets/sounds/player_die.mp3");
+			SoundUtil.play("player_die");
 		}
 	}
 	

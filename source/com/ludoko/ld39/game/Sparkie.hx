@@ -57,8 +57,6 @@ class Sparkie extends TileObject
 	public static inline var ENEMY_WIDTH:Int = 32;
 	public static inline var ENEMY_HEIGHT:Int = 32;
 	
-	public static var SOUND_ATK:FlxSound = null;
-	
 	public var state:Int = 0;
 	public var timer:Float = 0;
 	
@@ -79,12 +77,13 @@ class Sparkie extends TileObject
 		offset.y = Math.floor((frameHeight - height) * 0.5);
 		
 		health = 1;
+		SoundUtil.load("spark_attack");
 	}
 	
 	public function die():Void
 	{
 		animation.play("die");
-		FlxG.sound.play("assets/sounds/spark_die.mp3");
+		SoundUtil.play("spark_die");
 		state = 0;
 		alive = false;
 	}
@@ -194,15 +193,8 @@ class Sparkie extends TileObject
 	public function attack():Void
 	{
 		animation.play("bump");
-		if (SOUND_ATK == null)
-		{
-			SOUND_ATK = FlxG.sound.play("assets/sounds/spark_attack.mp3", 1, false, false);
-		}
-		else if (!SOUND_ATK.playing)
-		{
-			SOUND_ATK.volume = FlxRandom.floatRanged(0.3, 1);
-			SOUND_ATK.play(true);
-		}
+		
+		SoundUtil.play("spark_attack", true, FlxRandom.floatRanged(0.3, 1));
 	}
 	
 	private function sparkieHitsWire(S:FlxBasic, W:FlxBasic):Void
