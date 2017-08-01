@@ -147,7 +147,6 @@ class PlayState extends FlxState
 		
 		currentLevel = new GameLevel(14, 10);
 		
-		G.level = 1;
 		levelData = new TiledLevel("assets/data/level.tmx");
 		levelData.loadObjects("entities");
 		
