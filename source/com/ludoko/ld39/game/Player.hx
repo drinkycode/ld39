@@ -27,7 +27,7 @@ class Player extends TileObject
 	public static inline var WIRE_CREATE_START_Y:Int = 7;
 	public static inline var WIRE_CREATE_OFFSET:Int = 20;
 	
-	public static inline var INITIAL_HEALTH:Int = 3;
+	public static inline var INITIAL_HEALTH:Int = 5;
 	
 	
 	public var moving:Bool = false;

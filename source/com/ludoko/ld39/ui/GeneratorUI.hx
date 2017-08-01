@@ -16,9 +16,9 @@ class GeneratorUI extends FlxSpriteGroup
 	
 	public static var _group:FlxGroup;
 	
-	public static function preload(Amount:Int):FlxGroup
+	public static function preload(Amount:Int, Force:Bool = false):FlxGroup
 	{
-		if (_group == null)
+		if (Force || (_group == null))
 		{
 			_group = new FlxGroup();
 		}

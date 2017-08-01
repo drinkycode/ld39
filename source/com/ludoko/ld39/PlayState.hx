@@ -82,10 +82,10 @@ class PlayState extends FlxState
 		activeGenerators = new Array<Generator>();
 		
 		// Preloads for pooling.
-		Wire.preload(10);
-		Generator.preload(5);
-		GeneratorUI.preload(5);
-		Sparkie.preload(5);
+		Wire.preload(10, true);
+		Generator.preload(5, true);
+		GeneratorUI.preload(5, true);
+		Sparkie.preload(5, true);
 		
 		loadLevel();
 		
@@ -147,6 +147,7 @@ class PlayState extends FlxState
 		
 		currentLevel = new GameLevel(14, 10);
 		
+		G.level = 1;
 		levelData = new TiledLevel("assets/data/level.tmx");
 		levelData.loadObjects("entities");
 		
@@ -555,6 +556,11 @@ class PlayState extends FlxState
 	override public function update():Void
 	{
 		super.update();
+		
+		if (FlxG.keys.anyJustPressed(["R"]))
+		{
+			FlxG.switchState(new PlayState());
+		}
 		
 		var sparkie:FlxObject = Util.firstSimpleGroupOverlap(player, Sparkie.group);
 		if (sparkie != null)

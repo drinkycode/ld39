@@ -14,9 +14,9 @@ class Wire extends TileObject
 	
 	public static var group:FlxGroup;
 	
-	public static function preload(Amount:Int):FlxGroup
+	public static function preload(Amount:Int, Force:Bool = false):FlxGroup
 	{
-		if (group == null)
+		if (Force || (group == null))
 		{
 			group = new FlxGroup();
 		}
