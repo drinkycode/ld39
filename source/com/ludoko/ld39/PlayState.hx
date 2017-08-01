@@ -525,10 +525,10 @@ class PlayState extends FlxState
 			else
 			{
 				// Set level to refresh.
-				_refreshLevel = 3;
+				_refreshLevel = 0.5;
 			}
 			
-			gui.updateLevel(G.level);
+			gui.updateLevel(G.level + 1);
 		}
 	}
 	
@@ -562,7 +562,7 @@ class PlayState extends FlxState
 			}
 			
 			trace("On level " + G.level);
-			gui.updateLevel(G.level);
+			gui.updateLevel(G.level + 1);
 			
 			updateGeneratorUIs();
 		}
@@ -575,7 +575,7 @@ class PlayState extends FlxState
 			}
 			
 			trace("On level " + G.level);
-			gui.updateLevel(G.level);
+			gui.updateLevel(G.level + 1);
 			
 			updateGeneratorUIs();
 		}
@@ -608,6 +608,7 @@ class PlayState extends FlxState
 			
 			if (_refreshLevel <= 0)
 			{
+				gui.levelComplete.show();
 				updateGeneratorUIs();
 			}
 		}
