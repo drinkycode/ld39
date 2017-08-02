@@ -14,13 +14,13 @@ import flixel.util.FlxRandom;
 class Sparkie extends TileObject
 {
 
-	public static var group:FlxGroup;
+	public static var _group:FlxGroup;
 	
 	public static function preload(Amount:Int, Force:Bool = false):FlxGroup
 	{
-		if (Force || (group == null))
+		if (Force || (_group == null))
 		{
-			group = new FlxGroup();
+			_group = new FlxGroup();
 		}
 		
 		for (i in 0 ... Amount)
@@ -28,20 +28,20 @@ class Sparkie extends TileObject
 			createInstance();
 		}
 		
-		return group;
+		return _group;
 	}
 	
 	private static function createInstance():Sparkie
 	{
 		var o:Sparkie = new Sparkie();
 		o.kill();
-		group.add(o);
+		_group.add(o);
 		return o;
 	}
 
 	public static function create(X:Float, Y:Float):Sparkie
 	{
-		var o:Sparkie = cast group.getFirstDead();
+		var o:Sparkie = cast _group.getFirstDead();
 		if (o == null)
 		{
 			o = createInstance();
@@ -165,9 +165,9 @@ class Sparkie extends TileObject
 		super.update();
 		
 		FlxG.collide(this, Wall.group);
-		FlxG.collide(this, Generator.group);
+		FlxG.collide(this, Generator._group);
 		
-		FlxG.collide(this, Wire.group, sparkieHitsWire);
+		FlxG.collide(this, Wire._group, sparkieHitsWire);
 		
 		if ((y != previousY))
 		{

@@ -12,13 +12,13 @@ import flixel.util.FlxSpriteUtil;
 class Wire extends TileObject
 {
 	
-	public static var group:FlxGroup;
+	public static var _group:FlxGroup;
 	
 	public static function preload(Amount:Int, Force:Bool = false):FlxGroup
 	{
-		if (Force || (group == null))
+		if (Force || (_group == null))
 		{
-			group = new FlxGroup();
+			_group = new FlxGroup();
 		}
 		
 		for (i in 0 ... Amount)
@@ -26,20 +26,20 @@ class Wire extends TileObject
 			createInstance();
 		}
 		
-		return group;
+		return _group;
 	}
 	
 	private static function createInstance():Wire
 	{
 		var o:Wire = new Wire();
 		o.kill();
-		group.add(o);
+		_group.add(o);
 		return o;
 	}
 
 	public static function create(X:Float, Y:Float):Wire
 	{
-		var o:Wire = cast group.getFirstDead();
+		var o:Wire = cast _group.getFirstDead();
 		if (o == null)
 		{
 			o = createInstance();
@@ -144,11 +144,11 @@ class Wire extends TileObject
 		
 		var lit:Bool = false;
 		
-		for (i in 0 ... Generator.group.members.length)
+		for (i in 0 ... Generator._group.members.length)
 		{
-			if (!Generator.group.members[i].alive) continue;
+			if (!Generator._group.members[i].alive) continue;
 			
-			var generator:Generator = cast Generator.group.members[i];
+			var generator:Generator = cast Generator._group.members[i];
 			if (WireConnections[tileY][tileX] == WireConnections[generator.tileY][generator.tileX])
 			{
 				lit = true;

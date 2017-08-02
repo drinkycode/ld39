@@ -13,13 +13,13 @@ import flixel.util.FlxColorUtil;
 class Generator extends TileObject
 {
 
-	public static var group:FlxGroup;
+	public static var _group:FlxGroup;
 	
 	public static function preload(Amount:Int, Force:Bool = false):FlxGroup
 	{
-		if (Force || (group == null))
+		if (Force || (_group == null))
 		{
-			group = new FlxGroup();
+			_group = new FlxGroup();
 		}
 		
 		for (i in 0 ... Amount)
@@ -27,20 +27,20 @@ class Generator extends TileObject
 			createInstance();
 		}
 		
-		return group;
+		return _group;
 	}
 	
 	private static function createInstance():Generator
 	{
 		var o:Generator = new Generator();
 		o.kill();
-		group.add(o);
+		_group.add(o);
 		return o;
 	}
 
 	public static function create(TileX:Int, TileY:Int, Power:Float, NeededPower:Array<Float>, Source:Bool = false):Generator
 	{
-		var o:Generator = cast group.getFirstDead();
+		var o:Generator = cast _group.getFirstDead();
 		if (o == null)
 		{
 			o = createInstance();
@@ -49,6 +49,8 @@ class Generator extends TileObject
 		return o;
 	}
 	
+	
+	public static inline var SEARCH_DEPTH:Int = 6;
 	
 	public static inline var HITBOX_WIDTH:Int = 48;
 	public static inline var HITBOX_HEIGHT:Int = 48;
@@ -118,7 +120,7 @@ class Generator extends TileObject
 	
 	public function hasSource(Deep:Int = 0):Bool
 	{
-		if (Deep >= 3)
+		if (Deep >= SEARCH_DEPTH)
 		{
 			return source;
 		}
@@ -195,7 +197,7 @@ class Generator extends TileObject
 	
 	public function addConnection(OtherGenerator:Generator, AddedPower:Float):Void
 	{
-		trace("Adding power " + AddedPower);
+		//trace("Adding power " + AddedPower);
 		connections.push(new PowerContract(OtherGenerator, AddedPower));
 		checkGeneratorPower();
 	}

@@ -231,7 +231,7 @@ class Player extends TileObject
 		super.update();
 		
 		FlxG.collide(this, Wall.group);
-		FlxG.collide(this, Generator.group);
+		FlxG.collide(this, Generator._group);
 		
 		updateTileSelector();
 		
@@ -308,7 +308,7 @@ class Player extends TileObject
 		
 		G.setOPosition(centerX + createOffsetX, centerY + createOffsetY);
 		
-		if (!(Util.simpleGroupOverlap(G.o, Wire.group) || Util.simpleGroupOverlap(G.o, Generator.group)))
+		if (!(Util.simpleGroupOverlap(G.o, Wire._group) || Util.simpleGroupOverlap(G.o, Generator._group)))
 		{
 			switch(facing)
 			{
@@ -327,7 +327,7 @@ class Player extends TileObject
 		}
 		else
 		{
-			var obj:FlxObject = Util.firstSimpleGroupOverlap(G.o, Wire.group);
+			var obj:FlxObject = Util.firstSimpleGroupOverlap(G.o, Wire._group);
 			if (obj != null)
 			{
 				obj.kill();

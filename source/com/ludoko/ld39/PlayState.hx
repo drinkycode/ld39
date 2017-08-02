@@ -29,7 +29,7 @@ import flixel.util.FlxRandom;
 class PlayState extends FlxState
 {
 	
-	public static inline var ALLOW_DEBUG:Bool = false;
+	public static inline var ALLOW_DEBUG:Bool = true;
 
 	public static var instance:PlayState;
 	
@@ -48,6 +48,7 @@ class PlayState extends FlxState
 	
 	public var maxLevels:Int = 16;
 	
+	public var spawnSparkies:Bool = false;
 	private var _sparkieTimer:Float = 5;
 	
 	private var _refreshLevel:Float = 0;
@@ -66,8 +67,9 @@ class PlayState extends FlxState
 		{
 			FlxG.sound.music.stop();
 		}
-		SoundUtil.loadMusic("sewer_circuit", .35, true);
-		FlxG.sound.music.play();
+		
+		SoundUtil.loadMusic("sewer_circuit", 0.35, true);
+		//FlxG.sound.music.play();
 	}
 	
 	override public function destroy():Void
@@ -93,15 +95,10 @@ class PlayState extends FlxState
 		player = new Player(G.halfWidth, G.halfHeight);
 		gui = new GameGUI();
 		
-		//addGenerator(2, 2, 100, null);
-		
-		//addGenerator(5, 2, 0, null);
 		//currentLevel.addPowerArea([[4, 1], [4, 2], [4, 3], 
 		//						   [5, 1], [5, 2], [5, 3],
 		//						   [6, 1], [6, 2], [6, 3]],
 		//						   50);
-		
-		//addGenerator(8, 2, 0, null);
 		
 		//currentLevel.addPowerArea([[8,  7], [8,  8], [8,  9], 
 		//						   [9,  7], [9,  8], [9,  9],
@@ -171,7 +168,32 @@ class PlayState extends FlxState
 	public function addGenerator(TileX:Int, TileY:Int, Power:Float = 100, NeededPower:Array<Float>, Source:Bool = false):Generator
 	{
 		var generator:Generator = currentLevel.addGenerator(TileX, TileY, Power, NeededPower, Source);
-		activeGenerators.push(generator);
+		if (!Source)
+		{
+			activeGenerators.push(generator);
+		}
+		else
+		{
+			// Start at 1 since 0 should always be a source generator.
+			var i:Int = 1;
+			while (i < activeGenerators.length)
+			{
+				if (!activeGenerators[i].source)
+				{
+					break;
+				}
+				i++;
+			}
+			
+			if (i < activeGenerators.length)
+			{
+				activeGenerators.insert(i, generator);
+			}
+			else
+			{
+				activeGenerators.push(generator);
+			}
+		}
 		return generator;
 	}
 	
@@ -197,9 +219,9 @@ class PlayState extends FlxState
 			connections[activeGenerators[i].tileY][activeGenerators[i].tileX] = 1;
 		}
 		
-		for (i in 0 ... Wire.group.members.length)
+		for (i in 0 ... Wire._group.members.length)
 		{
-			var wire:Wire = cast Wire.group.members[i];
+			var wire:Wire = cast Wire._group.members[i];
 			if (!wire.alive) continue;
 			connections[wire.tileY][wire.tileX] = 1;
 			wireConnections[wire.tileY][wire.tileX] = 1;
@@ -208,11 +230,11 @@ class PlayState extends FlxState
 		// Check to see if surrounded sparkies are generators.
 		if (CheckForEnclosement)
 		{
-			for (i in 0 ... Sparkie.group.members.length)
+			for (i in 0 ... Sparkie._group.members.length)
 			{
-				if (!Sparkie.group.members[i].alive) continue;
+				if (!Sparkie._group.members[i].alive) continue;
 				
-				var sparkie:Sparkie = cast Sparkie.group.members[i];
+				var sparkie:Sparkie = cast Sparkie._group.members[i];
 				
 				var sparkieTileX:Int = GameLevel.tileAtX(sparkie.centerX);
 				var sparkieTileY:Int = GameLevel.tileAtY(sparkie.centerY);
@@ -257,31 +279,34 @@ class PlayState extends FlxState
 			}
 		}
 		
-		for (i in 0 ... Wire.group.members.length)
+		for (i in 0 ... Wire._group.members.length)
 		{
-			var wire:Wire = cast Wire.group.members[i];
+			var wire:Wire = cast Wire._group.members[i];
 			if (!wire.alive) continue;
 			wire.updateWireConnection(connections);
 		}
 		
 		// Clean up old connections
+		var lostConnection:Bool = false;
 		for (i in 0 ... activeGenerators.length)
 		{
 			var j:Int = activeGenerators[i].connections.length - 1;
 			while (j >= 0)
 			{
 				var otherGenerator:Generator = activeGenerators[i].connections[j].sourceGenerator;
-				if (connections[activeGenerators[i].tileY][activeGenerators[i].tileX] != connections[otherGenerator.tileY][otherGenerator.tileX])
+				if (connections[activeGenerators[i].tileY][activeGenerators[i].tileX] != connections[otherGenerator.tileY][otherGenerator.tileX] || 
+				    !checkForDirectConnection(activeGenerators[i], otherGenerator))
 				{
+					lostConnection = true;
 					removeGeneratorConnection(activeGenerators[i], otherGenerator);
-					trace("Removing connection between " + i + " " + j);
+					//trace("Removing connection between " + i + " " + activeGenerators.indexOf(otherGenerator));
 				}
 				j--;
 			}
 		}
 		
 		// Check for new connections.
-		var connected:Bool = false;
+		var newConnection:Bool = false;
 		for (i in 0 ... activeGenerators.length)
 		{
 			for (j in i + 1 ... activeGenerators.length)
@@ -292,61 +317,36 @@ class PlayState extends FlxState
 				{
 					if (checkForDirectConnection(activeGenerators[i], activeGenerators[j]))
 					{
+						newConnection = true;
 						addGeneratorConnection(activeGenerators[i], activeGenerators[j]);
-						trace("New connection between " + i + " " + j);
-						connected = true;
+						//trace("New connection between " + i + " " + j);
 					}
 				}
 			}
 		}
 		
-		if (connected)
+		if (newConnection)
 		{
 			SoundUtil.play("connected");
 		}
 		
 		// Figure out generator power distribution here.
-		
-		updatePowerDistribution();
-		
-		
-		// Finally need to clean up connections with any shared generators.
-		/*for (i in 0 ... activeGenerators.length)
+		if (lostConnection || newConnection)
 		{
-			if (activeGenerators[i].connections.length <= 0) continue;
+			updatePowerDistribution();
 			
-			for (j in i + 1 ... activeGenerators.length)
+			// Print out all contracts for generators.
+			/*for (i in 0 ... activeGenerators.length)
 			{
-				if (activeGenerators[i].hasConnection(activeGenerators[j]))
+				for (j in 0 ... activeGenerators[i].connections.length)
 				{
-					for (k in j + 1 ... activeGenerators.length)
-					{
-						if (activeGenerators[i].hasConnection(activeGenerators[k]) && activeGenerators[j].hasConnection(activeGenerators[k]))
-						{
-							var totalPower:Float = activeGenerators[i].power + activeGenerators[j].power + activeGenerators[k].power;
-							var powerSplit:Float = totalPower / 3;
-							
-							trace("Have three-way contract with total power " + totalPower);
-							
-							redoGeneratorContracts(activeGenerators[i], activeGenerators[j], powerSplit);
-							redoGeneratorContracts(activeGenerators[j], activeGenerators[k], powerSplit);
-							redoGeneratorContracts(activeGenerators[i], activeGenerators[k], powerSplit);
-						}
-					}
+					trace("Generator " + i + " has contract of power " + activeGenerators[i].connections[j].power + " with generator " + activeGenerators.indexOf(activeGenerators[i].connections[j].sourceGenerator));
 				}
-			}
-		}*/
-		
-		/*for (i in 0 ... activeGenerators.length)
-		{
-			for (j in 0 ... activeGenerators[i].connections.length)
-			{
-				trace("Generator " + i + " has contract of power " + activeGenerators[i].connections[j].power + " with generator " + activeGenerators.indexOf(activeGenerators[i].connections[j].sourceGenerator));
-			}
-		}*/
-		
-		checkPowerAreas();
-		checkLevelComplete();
+			}*/
+			
+			checkPowerAreas();
+			checkLevelComplete();
+		}
 	}
 	
 	private function buildConnections(X:Int, Y:Int, Connections:Array<Array<Int>>, Index:Int):Bool
@@ -415,10 +415,9 @@ class PlayState extends FlxState
 	
 	private function addGeneratorConnection(Generator1:Generator, Generator2:Generator):Void
 	{
-		var newPower:Float = (Generator1.power + Generator2.power) * 0.5;
-		
-		Generator1.addConnection(Generator2, newPower - Generator1.power);
-		Generator2.addConnection(Generator1, newPower - Generator2.power);
+		//var newPower:Float = (Generator1.power + Generator2.power) * 0.5;
+		Generator1.addConnection(Generator2, 0);
+		Generator2.addConnection(Generator1, 0);
 	}
 	
 	private function updatePowerDistribution():Void
@@ -426,8 +425,7 @@ class PlayState extends FlxState
 		// Zero out all power connections.
 		for (i in 0 ... activeGenerators.length)
 		{
-			activeGenerators[i].visited = false;
-			
+			// Find tree depth from power source.
 			activeGenerators[i].sourceDepth = -1;
 			activeGenerators[i].depthFromSource();
 			
@@ -437,58 +435,59 @@ class PlayState extends FlxState
 			}
 		}
 		
-		var rootGenerator:Generator = activeGenerators[0];
-		var splitSourcePower:Float = rootGenerator.power / (rootGenerator.connections.length + 1);
-		for (i in 0 ... rootGenerator.connections.length)
-		{
-			redoGeneratorContracts(rootGenerator, rootGenerator.connections[i].sourceGenerator, splitSourcePower);
-			rootGenerator.connections[i].sourceGenerator.visited = true;
-		}
+		// Evenly split power amongst initial source generator.
 		
-		recursiveUpdatePowerDistribution(rootGenerator);
+		for (i in 0 ... activeGenerators.length)
+		{
+			if (activeGenerators[i].source)
+			{
+				recursiveUpdatePowerDistribution(activeGenerators[i], []);
+			}
+		}
 	}
 	
-	private function recursiveUpdatePowerDistribution(SearchGenerator:Generator, Depth:Int = 0):Void
+	private function recursiveUpdatePowerDistribution(SearchGenerator:Generator, Visited:Array<Generator>):Void
 	{
-		SearchGenerator.visited = true;
-		
-		if (Depth > 6)
+		//trace("Visiting depth " + activeGenerators.indexOf(SearchGenerator) + " " + Visited.length + " " + SearchGenerator.connections.length);
+		if ((Visited.length > 6))
 		{
 			return;
 		}
 		
+		// Find generator connections that are children connections.
+		var newConnections:Int = 0;
 		for (i in 0 ... SearchGenerator.connections.length)
 		{
-			var generator:Generator = SearchGenerator.connections[i].sourceGenerator;
-			
-			var newConnections:Int = 0;
-			for (j in 0 ... generator.connections.length)
+			var depth:Int = SearchGenerator.connections[i].sourceGenerator.depthFromSource();
+			if (!SearchGenerator.connections[i].sourceGenerator.source && (depth > SearchGenerator.depthFromSource()) && (Visited.indexOf(SearchGenerator.connections[i].sourceGenerator) == -1))
 			{
-				var depth:Int = generator.connections[j].sourceGenerator.depthFromSource();
-				//trace(Depth + " Generator connection depth " + depth + " for generator " + activeGenerators.indexOf(generator.connections[j].sourceGenerator));
-				
-				if (depth > generator.depthFromSource())
+				//trace(Visited.length + " " + activeGenerators.indexOf(SearchGenerator) + " Generator connection depth " + depth + " for generator " + activeGenerators.indexOf(SearchGenerator.connections[i].sourceGenerator));
+				newConnections++;
+			}
+		}
+		
+		if (newConnections > 0)
+		{
+			var splitPower:Float = SearchGenerator.power / (newConnections + 1);
+			//trace(Visited.length + " Has connections " + newConnections + " with power split " + splitPower);
+			
+			// Split power evenly between children generators.
+			for (i in 0 ... SearchGenerator.connections.length)
+			{
+				if (!SearchGenerator.connections[i].sourceGenerator.source && (SearchGenerator.connections[i].sourceGenerator.depthFromSource() > SearchGenerator.depthFromSource()))
 				{
-					newConnections++;
+					redoGeneratorContracts(SearchGenerator, SearchGenerator.connections[i].sourceGenerator, splitPower);
 				}
 			}
 			
-			var splitPower:Float = generator.power / (newConnections + 1);
-			trace(Depth + " Has connections " + newConnections + " with power split " + splitPower);
-			
-			for (j in 0 ... generator.connections.length)
+			// Search in children generators for new connections.
+			for (i in 0 ... SearchGenerator.connections.length)
 			{
-				if (!generator.connections[j].sourceGenerator.visited && (generator.connections[j].sourceGenerator.depthFromSource() > generator.depthFromSource()))
+				if (!SearchGenerator.connections[i].sourceGenerator.source && (SearchGenerator.connections[i].sourceGenerator.depthFromSource() > SearchGenerator.depthFromSource()))
 				{
-					redoGeneratorContracts(generator, generator.connections[j].sourceGenerator, splitPower);
-				}
-			}
-			
-			for (j in 0 ... generator.connections.length)
-			{
-				if (!generator.connections[j].sourceGenerator.visited && (generator.connections[j].sourceGenerator.depthFromSource() > generator.depthFromSource()))
-				{
-					recursiveUpdatePowerDistribution(generator.connections[j].sourceGenerator, Depth + 1);
+					Visited.push(SearchGenerator);
+					recursiveUpdatePowerDistribution(SearchGenerator.connections[i].sourceGenerator, Visited);
+					Visited.remove(SearchGenerator);
 				}
 			}
 		}
@@ -561,7 +560,7 @@ class PlayState extends FlxState
 			FlxG.switchState(new PlayState());
 		}
 		
-		var sparkie:FlxObject = Util.firstSimpleGroupOverlap(player, Sparkie.group);
+		var sparkie:FlxObject = Util.firstSimpleGroupOverlap(player, Sparkie._group);
 		if (sparkie != null)
 		{
 			playerOverlapsSparkie(cast(sparkie, Sparkie));
@@ -601,14 +600,14 @@ class PlayState extends FlxState
 			{
 				G.setOPosition(FlxG.mouse.x, FlxG.mouse.y);
 			
-				if (!(Util.simpleGroupOverlap(G.o, Wire.group) || Util.simpleGroupOverlap(G.o, Generator.group)))
+				if (!(Util.simpleGroupOverlap(G.o, Wire._group) || Util.simpleGroupOverlap(G.o, Generator._group)))
 				{
 					Wire.create(FlxG.mouse.x, FlxG.mouse.y);
 					SoundUtil.play("place");
 				}
 				else
 				{
-					var obj:FlxObject = Util.firstSimpleGroupOverlap(G.o, Wire.group);
+					var obj:FlxObject = Util.firstSimpleGroupOverlap(G.o, Wire._group);
 					if (obj != null)
 					{
 						obj.kill();
@@ -617,19 +616,29 @@ class PlayState extends FlxState
 					}
 				}
 			}
+			
+			if (FlxG.keys.anyJustPressed(["G"]))
+			{
+				var tileX:Int = GameLevel.tileAtX(FlxG.mouse.x);
+				var tileY:Int = GameLevel.tileAtY(FlxG.mouse.y);
+				addGenerator(tileX, tileY, 25, null, true);
+			}
 		}
 		
-		_sparkieTimer -= FlxG.elapsed;
-		if (_sparkieTimer <= 0)
+		if (spawnSparkies)
 		{
-			addSparkie(FlxRandom.intRanged(0, GameLevel.levelWidth - 1), FlxRandom.intRanged(0, GameLevel.levelHeight - 1));
-			if (G.level < 3)
+			_sparkieTimer -= FlxG.elapsed;
+			if (_sparkieTimer <= 0)
 			{
-				_sparkieTimer = FlxRandom.floatRanged(8, 20);
-			}
-			else
-			{
-				_sparkieTimer = FlxRandom.floatRanged(5, 15);
+				addSparkie(FlxRandom.intRanged(0, GameLevel.levelWidth - 1), FlxRandom.intRanged(0, GameLevel.levelHeight - 1));
+				if (G.level < 3)
+				{
+					_sparkieTimer = FlxRandom.floatRanged(8, 20);
+				}
+				else
+				{
+					_sparkieTimer = FlxRandom.floatRanged(5, 15);
+				}
 			}
 		}
 		
