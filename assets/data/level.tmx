@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="14" height="10" tilewidth="48" tileheight="48" nextobjectid="15">
- <tileset firstgid="1" name="player" tilewidth="48" tileheight="96" tilecount="20" columns="5">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="14" height="10" tilewidth="48" tileheight="48" nextobjectid="15">
+ <tileset firstgid="1" name="player" tilewidth="48" tileheight="96" tilecount="20">
   <image source="../images/player.png" width="240" height="384"/>
  </tileset>
- <tileset firstgid="21" name="generator" tilewidth="48" tileheight="48" tilecount="1" columns="1">
+ <tileset firstgid="21" name="generator" tilewidth="48" tileheight="48" tilecount="1">
   <image source="../images/generator.png" width="48" height="64"/>
  </tileset>
  <objectgroup name="entities">
@@ -19,8 +19,8 @@
     <property name="level14" value="12"/>
     <property name="level15" value="25"/>
     <property name="level2" value="25"/>
-    <property name="level3" value="25"/>
-    <property name="level4" value="16"/>
+    <property name="level3" value="16"/>
+    <property name="level4" value="25"/>
     <property name="level5" value="25"/>
     <property name="level6" value="12"/>
     <property name="level7" value="11"/>
@@ -39,7 +39,7 @@
     <property name="level14" value="25"/>
     <property name="level15" value="50"/>
     <property name="level2" value="50"/>
-    <property name="level3" value="25"/>
+    <property name="level3" value="50"/>
     <property name="level4" value="50"/>
     <property name="level5" value="25"/>
     <property name="level6" value="25"/>
@@ -59,8 +59,8 @@
     <property name="level14" value="6"/>
     <property name="level15" value="6"/>
     <property name="level2" value="25"/>
-    <property name="level3" value="25"/>
-    <property name="level4" value="16"/>
+    <property name="level3" value="16"/>
+    <property name="level4" value="12"/>
     <property name="level5" value="25"/>
     <property name="level6" value="25"/>
     <property name="level7" value="11"/>
@@ -79,8 +79,8 @@
     <property name="level14" value="3"/>
     <property name="level15" value="6"/>
     <property name="level2" value="0"/>
-    <property name="level3" value="25"/>
-    <property name="level4" value="16"/>
+    <property name="level3" value="16"/>
+    <property name="level4" value="12"/>
     <property name="level5" value="25"/>
     <property name="level6" value="12"/>
     <property name="level7" value="11"/>
