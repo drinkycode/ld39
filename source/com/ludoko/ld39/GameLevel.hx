@@ -76,6 +76,7 @@ class GameLevel extends FlxGroup
 	public var layers:Array<Layer>;
 	public var powerAreas:Array<PowerArea>;
 	public var grid:Grid;
+	public var aboveGrid:FlxGroup;
 	public var gridUI:FlxGroup;
 	
 	public function new(LevelWidth:Int, LevelHeight:Int) 
@@ -95,6 +96,9 @@ class GameLevel extends FlxGroup
 		
 		gridUI = new FlxGroup();
 		add(gridUI);
+		
+		aboveGrid = new FlxGroup();
+		add(aboveGrid);
 		
 		setupWalls();
 		

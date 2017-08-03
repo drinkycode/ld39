@@ -24,6 +24,9 @@ class Player extends TileObject
 	public static inline var PLAYER_WIDTH:Int = 32;
 	public static inline var PLAYER_HEIGHT:Int = 32;
 	
+	public static inline var SHADOW_OFFSET_X:Int = -18;
+	public static inline var SHADOW_OFFSET_Y:Int = 8;
+	
 	public static inline var WIRE_CREATE_START_Y:Int = 7;
 	public static inline var WIRE_CREATE_OFFSET:Int = 20;
 	
@@ -33,6 +36,7 @@ class Player extends TileObject
 	public var moving:Bool = false;
 	public var placing:Bool = false;
 	
+	public var shadow:FlxSprite;
 	public var tileSelector:TileSelector;
 	
 	private var _hurtTimer:Float = 0;
@@ -73,6 +77,10 @@ class Player extends TileObject
 		
 		// Set player position here
 		setCenteredPosition(X, Y);
+		
+		shadow = new FlxSprite( -9999, -9999, "assets/images/player_shadow.png");
+		PlayState.instance.currentLevel.aboveGrid.add(shadow);
+		
 		tileSelector = new TileSelector();
 		
 		SoundUtil.load("walk", 0.25, true);
@@ -233,6 +241,7 @@ class Player extends TileObject
 		FlxG.collide(this, Wall.group);
 		FlxG.collide(this, Generator._group);
 		
+		updateShadow();
 		updateTileSelector();
 		
 		if ((y != previousY))
@@ -267,6 +276,12 @@ class Player extends TileObject
 		{
 			drag.y = 0;
 		}
+	}
+	
+	private function updateShadow():Void
+	{
+		shadow.x = centerX + SHADOW_OFFSET_X;
+		shadow.y = centerY + SHADOW_OFFSET_Y;
 	}
 	
 	private function updateTileSelector():Void
