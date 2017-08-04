@@ -1,6 +1,7 @@
 package com.ludoko.ld39.game;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.util.FlxSpriteUtil;
@@ -13,12 +14,14 @@ class Wire extends TileObject
 {
 	
 	public static var _group:FlxGroup;
+	public static var _map:Map<String, Wire>;
 	
 	public static function preload(Amount:Int, Force:Bool = false):FlxGroup
 	{
 		if (Force || (_group == null))
 		{
 			_group = new FlxGroup();
+			_map = new Map<String, Wire>();
 		}
 		
 		for (i in 0 ... Amount)
@@ -48,40 +51,103 @@ class Wire extends TileObject
 		return o;
 	}
 	
+	public static function setDepths()
+	{
+		if (Generator._group != null)
+		{
+			for (wire in _map)
+			{
+				wire.depth = 0;
+			}
+			for (i in 0 ... Generator._group.members.length)
+			{
+				var generator:Generator = cast Generator._group.members[i];
+				if (!generator.alive) continue;
+				var gx:Int = generator.tileX;
+				var gy:Int = generator.tileY;
+				var d:Int = generator.sourceDepth + 1;
+				if (generator.startingPower == 100)
+				{
+					d = 1;
+				}
+				else if (d <= 0 || d > 5)
+				{
+					d = 5;
+				}
+				//trace(i + ": " + d);
+				setDepthGen(gx, gy - 1, d, FlxObject.DOWN);
+				setDepthGen(gx, gy + 1, d, FlxObject.UP);
+				setDepthGen(gx - 1, gy, d, FlxObject.RIGHT);
+				setDepthGen(gx + 1, gy, d, FlxObject.LEFT);
+			}
+			for (wire in _map)
+			{
+				wire.playAnimation(null, wire.depth);
+			}
+		}
+	}
+	private static function setDepthGen(TileX:Int, TileY:Int, Depth:Int, Dir:Int = FlxObject.NONE, Priority:Int = 1)
+	{
+		if (_map.exists(TileX + "," + TileY))
+		{ 
+			var wire:Wire = _map.get(TileX + "," + TileY);
+			if (wire.priority > 0)
+			{
+				return;
+			}
+			
+			wire.depth = Depth;
+			wire.priority = Priority + 1;
+			//trace(wire.tileX + "," + wire.tileY + ": " + wire.priority);
+			if (Dir != FlxObject.UP)
+			{
+				setDepthGen(TileX, TileY - 1, Depth, FlxObject.DOWN, wire.priority);
+			}
+			if (Dir != FlxObject.DOWN)
+			{
+				setDepthGen(TileX, TileY + 1, Depth, FlxObject.UP, wire.priority);
+			}
+			if (Dir != FlxObject.LEFT)
+			{
+				setDepthGen(TileX - 1, TileY, Depth, FlxObject.RIGHT, wire.priority);
+			}
+			if (Dir != FlxObject.RIGHT)
+			{
+				setDepthGen(TileX + 1, TileY, Depth, FlxObject.LEFT, wire.priority);
+			}
+			
+			wire.priority = 0;
+		}
+	}
 	
 	public static inline var HITBOX_WIDTH:Int = 48;
 	public static inline var HITBOX_HEIGHT:Int = 48;
 	
-	private var _currentAnimation:String;
+	private var _currentAnimation:String = "horizontal";
 	private var _hurtTimer:Float = 0;
+	
+	public var depth:Int = 0;
+	public var priority:Int = 0;
 	
 	public function new() 
 	{
 		super();
 		loadGraphic("assets/images/wire.png", true, 48, 48);
-		animation.add("horizontal", 	[0], 0, false);
-		animation.add("vertical", 		[1], 0, false);
-		animation.add("corner_nw", 		[2], 0, false);
-		animation.add("corner_ne", 		[3], 0, false);
-		animation.add("corner_se", 		[4], 0, false);
-		animation.add("corner_sw", 		[5], 0, false);
-		animation.add("three_nwe", 		[6], 0, false);
-		animation.add("three_nse", 		[7], 0, false);
-		animation.add("three_sew", 		[8], 0, false);
-		animation.add("three_nsw", 		[9], 0, false);
-		animation.add("all", 			[10], 0, false);
-		
-		animation.add("horizontal_l", 	[11], 0, false);
-		animation.add("vertical_l", 	[12], 0, false);
-		animation.add("corner_nw_l", 	[13], 0, false);
-		animation.add("corner_ne_l", 	[14], 0, false);
-		animation.add("corner_se_l", 	[15], 0, false);
-		animation.add("corner_sw_l", 	[16], 0, false);
-		animation.add("three_nwe_l", 	[17], 0, false);
-		animation.add("three_nse_l", 	[18], 0, false);
-		animation.add("three_sew_l", 	[19], 0, false);
-		animation.add("three_nsw_l", 	[20], 0, false);
-		animation.add("all_l", 			[21], 0, false);
+		for (i in 0...6)
+		{
+			animation.add("horizontal"+i, 	[0+15*i], 0, false);
+			animation.add("vertical"+i, 	[1+15*i], 0, false);
+			animation.add("corner_nw"+i, 	[2+15*i], 0, false);
+			animation.add("corner_ne"+i, 	[3+15*i], 0, false);
+			animation.add("corner_se"+i, 	[4+15*i], 0, false);
+			animation.add("corner_sw"+i, 	[5+15*i], 0, false);
+			animation.add("three_nwe"+i, 	[6+15*i], 0, false);
+			animation.add("three_nse"+i, 	[7+15*i], 0, false);
+			animation.add("three_sew"+i, 	[8+15*i], 0, false);
+			animation.add("three_nsw"+i, 	[9+15*i], 0, false);
+			animation.add("all"+i, 			[10+15*i], 0, false);
+			animation.add("die"+i, 			[11+15*i, 12+15*i, 13+15*i, 14+15*i], 15, false);
+		}
 		
 		immovable = true;
 		
@@ -90,19 +156,29 @@ class Wire extends TileObject
 		centerOffsets();
 	}
 	
-	override public function kill():Void 
+	override public function kill():Void
 	{
 		super.kill();
 		if (PlayState.instance.currentLevel != null)
 		{
 			PlayState.instance.currentLevel.removeGameObjectFromLayer(this, tileY);
 		}
+		_map.remove(tileX + "," + tileY);
+		
+	}
+	
+	public function die():Void 
+	{
+		alive = false;
+		playAnimation("die", depth);
+		_map.remove(tileX + "," + tileY);
 	}
 	
 	override public function reset(X:Float, Y:Float):Void 
 	{
 		tileX = GameLevel.clampTileX(GameLevel.tileAtX(X));
 		tileY = GameLevel.clampTileY(GameLevel.tileAtY(Y));
+		_map.set(tileX + "," + tileY, this);
 		
 		super.reset(GameLevel.positionAtTileX(tileX), GameLevel.positionAtTileY(tileY));
 		
@@ -111,6 +187,7 @@ class Wire extends TileObject
 		
 		_hurtTimer = 0;
 		health = 2;
+		alive = true;
 	}
 	
 	public function updateWireConnection(WireConnections:Array<Array<Int>>):Void
@@ -120,6 +197,8 @@ class Wire extends TileObject
 		var connectedE:Bool = false;
 		var connectedS:Bool = false;
 		var connectedW:Bool = false;
+		
+		var lit:Int = 0;
 		
 		if ((tileY > 0) && (WireConnections[tileY - 1][tileX] != 0))
 		{
@@ -142,19 +221,7 @@ class Wire extends TileObject
 			connections++;
 		}
 		
-		var lit:Bool = false;
-		
-		for (i in 0 ... Generator._group.members.length)
-		{
-			if (!Generator._group.members[i].alive) continue;
-			
-			var generator:Generator = cast Generator._group.members[i];
-			if (WireConnections[tileY][tileX] == WireConnections[generator.tileY][generator.tileX])
-			{
-				lit = true;
-				break;
-			}
-		}
+		lit = depth;
 		
 		if (connections == 4)
 		{
@@ -219,29 +286,39 @@ class Wire extends TileObject
 		}
 	}
 	
-	private function playAnimation(Animation:String, Lit:Bool = false):Void
+	private function playAnimation(Animation:String, Lit:Int = 0):Void
 	{
-		_currentAnimation = Animation;
-		if (!Lit)
+		if (Animation != null)
 		{
-			animation.play(Animation);
+			_currentAnimation = Animation;
 		}
-		else
-		{
-			animation.play(Animation + "_l");
-		}
+		animation.play(_currentAnimation + Lit);
+		depth = Lit;
 	}
 	
 	override public function update():Void 
 	{
 		super.update();
 		_hurtTimer -= FlxG.elapsed;
+		
+		if (!alive && animation.finished && exists)
+		{
+			if (PlayState.instance.currentLevel != null)
+			{
+				PlayState.instance.currentLevel.removeGameObjectFromLayer(this, tileY);
+			}
+			exists = false;
+		}
 	}
 	
 	override public function hurt(Damage:Float):Void 
 	{
 		if (_hurtTimer > 0) return;
-		super.hurt(Damage);
+		health = health - Damage;
+		if (health <= 0)
+		{
+			die();
+		}
 		_hurtTimer = 2;
 		
 		if (health <= 0)

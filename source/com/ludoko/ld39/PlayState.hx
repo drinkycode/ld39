@@ -286,6 +286,9 @@ class PlayState extends FlxState
 			wire.updateWireConnection(connections);
 		}
 		
+		//trace("connections:");
+		//for (array in connections) trace(array);
+
 		// Clean up old connections
 		var lostConnection:Bool = false;
 		for (i in 0 ... activeGenerators.length)
@@ -347,6 +350,7 @@ class PlayState extends FlxState
 			checkPowerAreas();
 			checkLevelComplete();
 		}
+		Wire.setDepths();
 	}
 	
 	private function buildConnections(X:Int, Y:Int, Connections:Array<Array<Int>>, Index:Int):Bool
@@ -426,7 +430,7 @@ class PlayState extends FlxState
 		for (i in 0 ... activeGenerators.length)
 		{
 			// Find tree depth from power source.
-			activeGenerators[i].sourceDepth = -1;
+			activeGenerators[i].sourceDepth = 99;
 			activeGenerators[i].depthFromSource();
 			
 			for (j in 0 ... activeGenerators[i].connections.length)

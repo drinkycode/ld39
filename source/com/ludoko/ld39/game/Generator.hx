@@ -1,10 +1,12 @@
 package com.ludoko.ld39.game;
 
 import com.ludoko.ld39.ui.GeneratorUI;
+import flixel.FlxBasic;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 import flixel.util.FlxColorUtil;
+import flixel.util.FlxSort;
 
 /**
  * ...
@@ -70,7 +72,7 @@ class Generator extends TileObject
 	
 	public var startingPower:Float;
 	public var source:Bool = false;
-	public var sourceDepth:Int = -1;
+	public var sourceDepth:Int = 99;
 	
 	public var visited:Bool;
 	
@@ -143,13 +145,33 @@ class Generator extends TileObject
 	
 	public function depthFromSource():Int
 	{
-		if (sourceDepth != -1)
+		if (sourceDepth != 99)
 		{
 			return sourceDepth;
 		}
 		
 		sourceDepth = recursiveDepthFromSource();
+		var generator:Generator = this;
+		_group.sort(sortDepth, FlxSort.DESCENDING);
+
 		return sourceDepth;
+	}
+	
+	private function sortDepth(Order:Int, Obj1:FlxBasic, Obj2:FlxBasic):Int
+	{
+		var gen1:Generator = cast(Obj1, Generator);
+		var gen2:Generator = cast(Obj2, Generator);
+		var depth1:Int = 99;
+		var depth2:Int = 99;
+		if (gen1 != null)
+		{
+			depth1 = gen1.sourceDepth;
+		}
+		if (gen2 != null)
+		{
+			depth2 = gen2.sourceDepth;
+		}
+		return FlxSort.byValues(Order, depth1, depth2);
 	}
 	
 	private function recursiveDepthFromSource(Depth:Int = 0):Int
