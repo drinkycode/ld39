@@ -29,7 +29,7 @@ import flixel.util.FlxRandom;
 class PlayState extends FlxState
 {
 	
-	public static inline var ALLOW_DEBUG:Bool = true;
+	public static inline var ALLOW_DEBUG:Bool = false;
 
 	public static var instance:PlayState;
 	
@@ -48,8 +48,8 @@ class PlayState extends FlxState
 	
 	public var maxLevels:Int = 16;
 	
-	public var spawnSparkies:Bool = false;
-	private var _sparkieTimer:Float = 5;
+	public var spawnSparkies:Bool = true;
+	private var _sparkieTimer:Float = 10;
 	
 	private var _refreshLevel:Float = 0;
 	
@@ -637,11 +637,11 @@ class PlayState extends FlxState
 				addSparkie(FlxRandom.intRanged(0, GameLevel.levelWidth - 1), FlxRandom.intRanged(0, GameLevel.levelHeight - 1));
 				if (G.level < 3)
 				{
-					_sparkieTimer = FlxRandom.floatRanged(8, 20);
+					_sparkieTimer = FlxRandom.floatRanged(18, 32);
 				}
 				else
 				{
-					_sparkieTimer = FlxRandom.floatRanged(5, 15);
+					_sparkieTimer = FlxRandom.floatRanged(12, 22);
 				}
 			}
 		}
