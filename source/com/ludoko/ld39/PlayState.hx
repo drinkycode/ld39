@@ -29,7 +29,7 @@ import flixel.util.FlxRandom;
 class PlayState extends FlxState
 {
 	
-	public static inline var ALLOW_DEBUG:Bool = false;
+	public static inline var ALLOW_DEBUG:Bool = true;
 
 	public static var instance:PlayState;
 	
@@ -48,7 +48,7 @@ class PlayState extends FlxState
 	
 	public var maxLevels:Int = 16;
 	
-	public var spawnSparkies:Bool = true;
+	public var spawnSparkies:Bool = false;
 	private var _sparkieTimer:Float = 10;
 	
 	private var _refreshLevel:Float = 0;
